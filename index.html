@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rent Accounts</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#8C3B2E">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F1E4; --line:#D8CBA8; --ink:#241E17; --ink-soft:#6B6152;
+  --red:#8C3B2E; --green:#3E6B4B; --card:#FFFDF6; --accent:#B4832A;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Source Serif 4',Georgia,serif;
+  background-image:repeating-linear-gradient(var(--paper) 0 27px, var(--line) 27px 28px);
+}
+header{position:sticky;top:0;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 12px;background:var(--paper);
+  border-bottom:2px solid var(--ink); z-index:5;}
+header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.3px}
+header p{margin:2px 0 0;color:var(--ink-soft);font-size:12.5px;font-family:'Space Mono',monospace}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 18px 0;background:var(--paper);position:sticky;top:64px;z-index:5;border-bottom:1px solid var(--line)}
+nav button{flex:0 0 auto;background:none;border:none;padding:8px 4px 10px;font-family:'Space Mono',monospace;font-size:12px;
+  color:var(--ink-soft);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav button.active{color:var(--ink);border-bottom-color:var(--accent);font-weight:700}
+main{padding:16px 16px 90px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:14px 16px;margin-bottom:12px;
+  box-shadow:2px 2px 0 rgba(36,30,23,.05)}
+.card h3{margin:0 0 8px;font-size:15px;display:flex;justify-content:space-between;align-items:baseline}
+.tag{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--ink-soft);border:1px solid var(--line);padding:2px 6px;border-radius:2px}
+.row{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:13px;padding:3px 0;color:var(--ink-soft)}
+.row b{color:var(--ink);font-weight:400}
+.num{font-family:'Space Mono',monospace}
+.pos{color:var(--green)} .neg{color:var(--red)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.big{font-size:26px;font-weight:700;font-family:'Space Mono',monospace}
+label{display:block;font-size:12px;color:var(--ink-soft);margin:10px 0 4px;font-family:'Space Mono',monospace}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:2px;background:#fff;
+  font-family:'Space Mono',monospace;font-size:14px;color:var(--ink)}
+.btn{display:inline-block;margin-top:14px;background:var(--ink);color:var(--paper);border:none;padding:11px 18px;
+  border-radius:2px;font-family:'Space Mono',monospace;font-size:13px;cursor:pointer}
+.btn.ghost{background:none;border:1px solid var(--ink);color:var(--ink)}
+.btn.danger{background:var(--red)}
+.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--accent);color:#fff;
+  border:none;width:52px;height:52px;border-radius:50%;font-size:26px;box-shadow:0 3px 8px rgba(0,0,0,.25);cursor:pointer}
+.empty{color:var(--ink-soft);font-size:13px;text-align:center;padding:30px 10px;font-family:'Space Mono',monospace}
+.divider{border:none;border-top:1px dashed var(--line);margin:10px 0}
+.modal-bg{position:fixed;inset:0;background:rgba(36,30,23,.45);display:none;align-items:flex-end;z-index:20}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);width:100%;max-height:88vh;overflow-y:auto;border-radius:12px 12px 0 0;padding:18px 18px 24px}
+.modal h2{margin:0 0 4px;font-size:18px}
+.close{float:right;background:none;border:none;font-size:20px;color:var(--ink-soft);cursor:pointer}
+.entryline{border-bottom:1px solid var(--line);padding:8px 0}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--paper:#1B1712;--card:#242019;--ink:#EDE6D6;--ink-soft:#9A8F79;--line:#3A3325;--card:#242019}
+}
+:root[data-theme="dark"]{--paper:#1B1712;--card:#242019;--ink:#EDE6D6;--ink-soft:#9A8F79;--line:#3A3325}
+</style>
+</head>
+<body>
+<header>
+  <h1>Rent Accounts</h1>
+  <p id="subtitle">rent · electricity · repairs</p>
+</header>
+<nav id="tabs"></nav>
+<main id="main"></main>
+<button class="fab" id="fab">+</button>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+
+<script>
+const KEY='kirayakhata_v1';
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || seed(); }catch(e){ return seed(); } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){} }
+function seed(){ return { houses:[], rooms:[], tenants:[], entries:[], expenses:[], elecBills:[], elecReceipts:[], settings:{autoBackupEnabled:false,lastBackupDate:null} }; }
+let DB = load();
+DB.settings = DB.settings || {autoBackupEnabled:false, lastBackupDate:null};
+DB.elecBills = DB.elecBills || []; DB.elecReceipts = DB.elecReceipts || [];
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+let tab = 'dash';
+const tabsDef = [['dash','Dashboard'],['tenants','Tenants'],['electricity','Electricity'],['reports','Reports'],['fund','Repair Fund'],['archive','Archive'],['setup','Houses'],['names','Edit Names'],['backup','Backup'],['account','Account']];
+
+// ---------- Google Sign-In + Drive sync ----------
+// Replace with your own OAuth Client ID from Google Cloud Console (see setup guide).
+const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+const DRIVE_FILE_NAME = 'rent-accounts-backup.json';
+let driveToken = null, driveUser = null, driveFileId = null, tokenClient = null;
+
+function initGoogle(){
+  if(!window.google || !google.accounts || GOOGLE_CLIENT_ID.startsWith('YOUR_CLIENT_ID')) return;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/drive.appdata email profile openid',
+    callback: async (resp) => {
+      if(resp.error){ return; }
+      driveToken = resp.access_token;
+      const info = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {headers:{Authorization:'Bearer '+driveToken}}).then(r=>r.json()).catch(()=>null);
+      driveUser = info || {email:'signed in'};
+      await checkDriveOnSignIn();
+      render();
+    }
+  });
+}
+function driveSignIn(){
+  if(!tokenClient){ initGoogle(); }
+  if(!tokenClient){
+    openModal(`<button class="close" onclick="closeModal()">×</button><h2>Not configured</h2><p style="font-size:13px;color:var(--red)">Google Sign-In needs a Client ID set up first — see the setup guide that came with this app.</p>`);
+    return;
+  }
+  tokenClient.requestAccessToken({prompt:'consent'});
+}
+function driveSignOut(){
+  if(driveToken) google.accounts.oauth2.revoke(driveToken, ()=>{});
+  driveToken = null; driveUser = null; driveFileId = null;
+  render();
+}
+async function driveFindFile(){
+  const q = encodeURIComponent(`name='${DRIVE_FILE_NAME}'`);
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,name)`, {headers:{Authorization:'Bearer '+driveToken}}).then(r=>r.json());
+  return (res.files && res.files[0]) ? res.files[0].id : null;
+}
+async function checkDriveOnSignIn(){
+  driveFileId = await driveFindFile();
+  if(driveFileId){
+    const content = await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, {headers:{Authorization:'Bearer '+driveToken}}).then(r=>r.text());
+    openModal(`<button class="close" onclick="closeModal()">×</button><h2>Data found in Drive</h2>
+      <p style="font-size:13px;color:var(--ink-soft)">There's a backup in ${driveUser.email}'s Drive. Load it onto this device? This replaces what's currently here.</p>
+      <button class="btn danger" onclick='loadFromDriveConfirmed(${JSON.stringify(content)})'>Load it</button>
+      <button class="btn ghost" onclick="closeModal()">Not now — keep this device's data</button>`);
+  }
+}
+function loadFromDriveConfirmed(content){
+  try{
+    const parsed = JSON.parse(content);
+    DB = parsed;
+    DB.settings = DB.settings || {autoBackupEnabled:false, lastBackupDate:null};
+    DB.elecBills = DB.elecBills || []; DB.elecReceipts = DB.elecReceipts || [];
+    save(); closeModal(); tab='dash'; render();
+  }catch(e){}
+}
+async function saveToDrive(){
+  if(!driveToken){ driveSignIn(); return; }
+  const data = JSON.stringify(DB, null, 2);
+  if(!driveFileId) driveFileId = await driveFindFile();
+  if(driveFileId){
+    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+      method:'PATCH', headers:{Authorization:'Bearer '+driveToken, 'Content-Type':'application/json'}, body:data
+    });
+  } else {
+    const boundary = 'ratboundary';
+    const meta = JSON.stringify({name:DRIVE_FILE_NAME, parents:['appDataFolder']});
+    const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${meta}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${data}\r\n--${boundary}--`;
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method:'POST', headers:{Authorization:'Bearer '+driveToken, 'Content-Type':`multipart/related; boundary=${boundary}`}, body
+    }).then(r=>r.json());
+    driveFileId = res.id;
+  }
+  render();
+}
+function renderAccount(){
+  if(GOOGLE_CLIENT_ID.startsWith('YOUR_CLIENT_ID')){
+    return `<div class="card"><h3>Google Sign-In</h3>
+      <p style="font-size:13px;color:var(--ink-soft)">Not set up yet. Follow the setup guide (setup-google-drive.md) that came with this app to create a free Google Cloud OAuth Client ID, then paste it into GOOGLE_CLIENT_ID near the top of the script in index.html.</p>
+    </div>`;
+  }
+  if(!driveUser){
+    return `<div class="card"><h3>Google Sign-In</h3>
+      <p style="font-size:13px;color:var(--ink-soft)">Sign in to load your data on this device, or push what's on this device to your Drive so other devices can pull it.</p>
+      <button class="btn" onclick="driveSignIn()">Sign in with Google</button>
+    </div>`;
+  }
+  return `<div class="card"><h3>Signed in</h3>
+    <div class="row"><span>Account</span><b>${driveUser.email||''}</b></div>
+    <button class="btn" style="margin-top:10px" onclick="saveToDrive()">Save this device's data to Drive</button><br>
+    <button class="btn ghost" onclick="checkDriveOnSignIn()">Check Drive for newer data</button><br>
+    <button class="btn ghost" onclick="driveSignOut()">Sign out</button>
+  </div>
+  <div class="empty">Data is stored in a private file only this app can see in your Drive — it won't show up in your regular Drive folder list.</div>`;
+}
+window.addEventListener('load', ()=>{ setTimeout(initGoogle, 300); });
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
+let reportFilter = {houseId:'', from:'', to:''};
+
+function render(){
+  const nav = document.getElementById('tabs');
+  nav.innerHTML = tabsDef.map(([id,label])=>`<button data-t="${id}" class="${tab===id?'active':''}">${label}</button>`).join('');
+  nav.querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render();});
+  const m = document.getElementById('main');
+  if(tab==='dash') m.innerHTML = renderDash();
+  if(tab==='tenants') m.innerHTML = renderTenants();
+  if(tab==='electricity') m.innerHTML = renderElectricity();
+  if(tab==='reports') m.innerHTML = renderReports();
+  if(tab==='fund') m.innerHTML = renderFund();
+  if(tab==='archive') m.innerHTML = renderArchive();
+  if(tab==='setup') m.innerHTML = renderSetup();
+  if(tab==='names') m.innerHTML = renderNames();
+  if(tab==='backup') m.innerHTML = renderBackup();
+  if(tab==='account') m.innerHTML = renderAccount();
+  document.getElementById('fab').onclick = ()=> {
+    if(tab==='setup') openHouseModal();
+    else if(tab==='fund') openExpenseModal();
+    else if(tab==='electricity') openElecPickerModal();
+    else openTenantModal();
+  };
+  document.getElementById('fab').style.display = (tab==='archive'||tab==='names'||tab==='backup'||tab==='reports'||tab==='account') ? 'none' : 'block';
+  wireRowClicks();
+}
+
+function activeTenants(){ return DB.tenants.filter(t=>t.status!=='vacated'); }
+function roomName(id){ const r=DB.rooms.find(x=>x.id===id); return r?r.name:'—'; }
+function houseOfRoom(id){ const r=DB.rooms.find(x=>x.id===id); return r?r.houseId:null; }
+function houseName(id){ const h=DB.houses.find(x=>x.id===id); return h?h.name:'—'; }
+function tenantEntries(tid){ return DB.entries.filter(e=>e.tenantId===tid).sort((a,b)=>b.date.localeCompare(a.date)); }
+
+function tenantElecReceipts(tid){ return (DB.elecReceipts||[]).filter(x=>x.tenantId===tid).sort((a,b)=>b.date.localeCompare(a.date)); }
+
+function houseElecTotals(houseId){
+  const bills = (DB.elecBills||[]).filter(b=>b.houseId===houseId);
+  const receipts = (DB.elecReceipts||[]).filter(x=>x.houseId===houseId);
+  const billed = bills.reduce((s,b)=>s+Number(b.amount),0);
+  const received = receipts.reduce((s,b)=>s+Number(b.amount),0);
+  return { billed, received, profit: received-billed };
+}
+
+function renderDash(){
+  const totRent = DB.entries.reduce((s,e)=>s+Number(e.rent||0),0);
+  const totBilled = (DB.elecBills||[]).reduce((s,b)=>s+Number(b.amount),0);
+  const totReceived = (DB.elecReceipts||[]).reduce((s,b)=>s+Number(b.amount),0);
+  const totExp = DB.expenses.reduce((s,e)=>s+Number(e.amount),0);
+  let html = `<div class="card"><h3>Total collected <span class="tag">all time</span></h3>
+    <div class="big">₹${(totRent+totReceived).toLocaleString('en-IN')}</div>
+    <hr class="divider">
+    <div class="row"><span>Rent</span><b class="num">₹${totRent.toLocaleString('en-IN')}</b></div>
+    <div class="row"><span>Electricity received from flats</span><b class="num">₹${totReceived.toLocaleString('en-IN')}</b></div>
+    <div class="row"><span>Electricity actually billed</span><b class="num">₹${totBilled.toLocaleString('en-IN')}</b></div>
+    <div class="row"><span>Electricity profit</span><b class="num pos">₹${(totReceived-totBilled).toLocaleString('en-IN')}</b></div>
+    <div class="row"><span>Repairs spent</span><b class="num neg">₹${totExp.toLocaleString('en-IN')}</b></div>
+    <div class="row"><span>Net repair fund</span><b class="num">₹${(totReceived-totBilled-totExp).toLocaleString('en-IN')}</b></div>
+  </div>`;
+  const activeSec = activeTenants();
+  const totSecurity = activeSec.reduce((s,t)=>s+Number(t.security||0),0);
+  html += `<div class="card"><h3>Security outstanding</h3>
+    <div class="big">₹${totSecurity.toLocaleString('en-IN')}</div>
+    <p style="font-size:12px;color:var(--ink-soft);margin:2px 0 8px">Held for ${activeSec.length} active tenant${activeSec.length!==1?'s':''} — refundable when they vacate.</p>
+    ${activeSec.filter(t=>t.security>0).map(t=>`<div class="row"><span>${t.name} <span class="tag">${t.serial||''}</span></span><b class="num">₹${Number(t.security).toLocaleString('en-IN')}</b></div>`).join('') || '<div class="empty">No deposits on record.</div>'}
+  </div>`;
+  if(!DB.houses.length){
+    html += `<div class="empty">No houses set up yet.<br>Go to "Houses" to add your first property and rooms.</div>`;
+    return html;
+  }
+  html += DB.houses.map(h=>{
+    const {profit} = houseElecTotals(h.id);
+    const hExp = DB.expenses.filter(x=>x.houseId===h.id).reduce((s,e)=>s+Number(e.amount),0);
+    const roomIds = DB.rooms.filter(r=>r.houseId===h.id).map(r=>r.id);
+    const nTenants = DB.tenants.filter(t=>roomIds.includes(t.roomId)&&t.status!=='vacated').length;
+    return `<div class="card"><h3>${h.name} <span class="tag">${nTenants} tenant${nTenants!==1?'s':''}</span></h3>
+      <div class="row"><span>Electricity profit</span><b class="num pos">₹${profit.toLocaleString('en-IN')}</b></div>
+      <div class="row"><span>Repairs spent</span><b class="num neg">₹${hExp.toLocaleString('en-IN')}</b></div>
+      <div class="row"><span>Fund balance</span><b class="num">₹${(profit-hExp).toLocaleString('en-IN')}</b></div>
+    </div>`;
+  }).join('');
+  return html;
+}
+
+function renderTenants(){
+  const list = activeTenants();
+  if(!DB.houses.length) return `<div class="empty">Add a house and room first, in the "Houses" tab.</div>`;
+  if(!list.length) return `<div class="empty">No active tenants yet. Tap + to add one.</div>`;
+  return list.map(t=>{
+    const es = tenantEntries(t.id);
+    const elecs = tenantElecReceipts(t.id);
+    const lastRent = es[0]; const lastElec = elecs[0];
+    return `<div class="card" data-tenant="${t.id}"><h3>${t.name} <span class="tag">${t.serial||'—'}</span></h3>
+      <div class="row"><span>Room</span><b>${roomName(t.roomId)}</b></div>
+      <div class="row"><span>House</span><b>${houseName(houseOfRoom(t.roomId))}</b></div>
+      <div class="row"><span>Rent due</span><b>${t.dueDay||'—'}</b></div>
+      <div class="row"><span>Security</span><b class="num">₹${Number(t.security||0).toLocaleString('en-IN')}</b></div>
+      ${lastRent? `<div class="row"><span>Last rent (${lastRent.month})</span><b class="num">₹${Number(lastRent.rent).toLocaleString('en-IN')}</b></div>`:''}
+      ${lastElec? `<div class="row"><span>Last electricity paid</span><b class="num">₹${Number(lastElec.amount).toLocaleString('en-IN')} on ${lastElec.date}</b></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function wireRowClicks(){
+  document.querySelectorAll('[data-tenant]').forEach(el=>{
+    el.onclick=()=>openTenantDetail(el.dataset.tenant);
+  });
+}
+
+function renderElectricity(){
+  if(!DB.houses.length) return `<div class="empty">Add a house first, in the "Houses" tab — each house has one electricity meter shared by its flats.</div>`;
+  return DB.houses.map(h=>{
+    const bills = (DB.elecBills||[]).filter(b=>b.houseId===h.id).sort((a,b)=>b.date.localeCompare(a.date));
+    const receipts = (DB.elecReceipts||[]).filter(x=>x.houseId===h.id).sort((a,b)=>b.date.localeCompare(a.date));
+    const totalBilled = bills.reduce((s,b)=>s+Number(b.amount),0);
+    const totalReceived = receipts.reduce((s,b)=>s+Number(b.amount),0);
+    const lastBill = bills[0];
+    const lastPerUnit = lastBill && lastBill.units ? (lastBill.amount/lastBill.units).toFixed(2) : '—';
+    return `<div class="card"><h3>${h.name}</h3>
+      <div class="row"><span>Latest bill rate</span><b class="num">₹${lastPerUnit}/unit</b></div>
+      <div class="row"><span>Total billed (meter)</span><b class="num">₹${totalBilled.toLocaleString('en-IN')}</b></div>
+      <div class="row"><span>Total received (flats)</span><b class="num">₹${totalReceived.toLocaleString('en-IN')}</b></div>
+      <div class="row"><span>Difference (profit)</span><b class="num pos">₹${(totalReceived-totalBilled).toLocaleString('en-IN')}</b></div>
+      <div style="margin-top:8px">
+        <button class="btn ghost" style="padding:6px 10px;margin:0 6px 0 0" onclick="openElecBillModal('${h.id}')">+ Bill</button>
+        <button class="btn ghost" style="padding:6px 10px;margin:0" onclick="openElecReceiptModal('${h.id}')">+ Received</button>
+      </div>
+      ${bills.length||receipts.length? `<hr class="divider">
+      ${bills.map(b=>`<div class="entryline row"><span>Bill · ${b.date}</span><b class="num">${b.units}u @ ₹${b.units?(b.amount/b.units).toFixed(2):'—'} = ₹${b.amount}</b></div>`).join('')}
+      ${receipts.map(x=>`<div class="entryline row"><span>Received · ${x.date}${x.tenantName?' · '+x.tenantName:''}${x.linkedEntryId?' <span class="tag">auto</span>':''}</span><b class="num pos">₹${x.amount}</b></div>`).join('')}` : ''}
+    </div>`;
+  }).join('');
+}
+function openElecPickerModal(){
+  if(!DB.houses.length){ openHouseModal(); return; }
+  const opts = DB.houses.map(h=>`<option value="${h.id}">${h.name}</option>`).join('');
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Add electricity record</h2>
+    <label>House / meter</label><select id="epHouse">${opts}</select>
+    <button class="btn" onclick="openElecBillModal(document.getElementById('epHouse').value)">+ Bill entry</button>
+    <button class="btn ghost" onclick="openElecReceiptModal(document.getElementById('epHouse').value)">+ Received entry</button>`);
+}
+function openElecBillModal(houseId){
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>New electricity bill</h2>
+    <label>Bill date</label><input id="bDate" type="date">
+    <label>Units used</label><input id="bUnits" type="number">
+    <label>Bill amount (₹)</label><input id="bAmount" type="number">
+    <p style="font-size:12px;color:var(--ink-soft)">Per-unit rate is calculated automatically once saved.</p>
+    <button class="btn" onclick="saveElecBill('${houseId}')">Save bill</button>`);
+}
+function saveElecBill(houseId){
+  DB.elecBills = DB.elecBills||[];
+  DB.elecBills.push({id:uid(), houseId, date:document.getElementById('bDate').value,
+    units:Number(document.getElementById('bUnits').value||0), amount:Number(document.getElementById('bAmount').value||0)});
+  save(); closeModal(); tab='electricity'; render();
+}
+function openElecReceiptModal(houseId){
+  const roomIds = DB.rooms.filter(r=>r.houseId===houseId).map(r=>r.id);
+  const flats = DB.tenants.filter(t=>roomIds.includes(t.roomId)&&t.status!=='vacated');
+  const opts = `<option value="">— not tied to a flat —</option>` + flats.map(t=>`<option value="${t.id}">${t.name} (${roomName(t.roomId)})</option>`).join('');
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Electricity received</h2>
+    <label>Date</label><input id="rDate" type="date">
+    <label>Amount received (₹)</label><input id="rAmount" type="number">
+    <label>From which flat (optional)</label><select id="rTenant">${opts}</select>
+    <button class="btn" onclick="saveElecReceipt('${houseId}')">Save</button>`);
+}
+function saveElecReceipt(houseId){
+  DB.elecReceipts = DB.elecReceipts||[];
+  const tenantId = document.getElementById('rTenant').value;
+  const t = DB.tenants.find(x=>x.id===tenantId);
+  DB.elecReceipts.push({id:uid(), houseId, tenantId:tenantId||null, tenantName:t?t.name:null,
+    date:document.getElementById('rDate').value, amount:Number(document.getElementById('rAmount').value||0)});
+  save(); closeModal(); tab='electricity'; render();
+}
+function inRange(dateStr, from, to){
+  if(!dateStr) return false;
+  if(from && dateStr < from) return false;
+  if(to && dateStr > to) return false;
+  return true;
+}
+function renderReports(){
+  const f = reportFilter;
+  const houseOpts = `<option value="">All houses</option>` + DB.houses.map(h=>`<option value="${h.id}" ${f.houseId===h.id?'selected':''}>${h.name}</option>`).join('');
+  let rentEntries = DB.entries.filter(e=>inRange(e.date, f.from, f.to));
+  let elecEntries = (DB.elecReceipts||[]).filter(e=>inRange(e.date, f.from, f.to));
+  let billEntries = (DB.elecBills||[]).filter(b=>inRange(b.date, f.from, f.to));
+  if(f.houseId){
+    rentEntries = rentEntries.filter(e=>{ const t=DB.tenants.find(x=>x.id===e.tenantId); return t && houseOfRoom(t.roomId)===f.houseId; });
+    elecEntries = elecEntries.filter(e=>e.houseId===f.houseId);
+    billEntries = billEntries.filter(b=>b.houseId===f.houseId);
+  }
+  const totRent = rentEntries.reduce((s,e)=>s+Number(e.rent),0);
+  const totElec = elecEntries.reduce((s,e)=>s+Number(e.amount),0);
+  const totBilled = billEntries.reduce((s,b)=>s+Number(b.amount),0);
+  let html = `<div class="card"><h3>Filter by period</h3>
+    <label>House</label><select id="fHouse" onchange="updateReportFilter()">${houseOpts}</select>
+    <label>From</label><input id="fFrom" type="date" value="${f.from||''}" onchange="updateReportFilter()">
+    <label>To</label><input id="fTo" type="date" value="${f.to||''}" onchange="updateReportFilter()">
+  </div>`;
+  if(!f.from && !f.to) return html + `<div class="empty">Pick a "From" and/or "To" date above to see rent and electricity received in that period.</div>`;
+  html += `<div class="card"><h3>Rent received</h3><div class="big">₹${totRent.toLocaleString('en-IN')}</div><hr class="divider">
+    ${rentEntries.sort((a,b)=>b.date.localeCompare(a.date)).map(e=>{ const t=DB.tenants.find(x=>x.id===e.tenantId);
+      return `<div class="entryline row"><span>${e.date} · ${t?t.name+' ('+t.serial+')':'—'}</span><b class="num">₹${Number(e.rent).toLocaleString('en-IN')}</b></div>`; }).join('') || '<div class="empty">No rent received in this period.</div>'}
+  </div>
+  <div class="card"><h3>Electricity — bills vs. fund received</h3>
+    <div class="row"><span>Meter bills (actual cost)</span><b class="num">₹${totBilled.toLocaleString('en-IN')}</b></div>
+    <div class="row"><span>Received from tenants</span><b class="num">₹${totElec.toLocaleString('en-IN')}</b></div>
+    <div class="row"><span>Profit → repair fund</span><b class="num pos">₹${(totElec-totBilled).toLocaleString('en-IN')}</b></div>
+    <hr class="divider">
+    <h3 style="font-size:13px">Bills</h3>
+    ${billEntries.sort((a,b)=>b.date.localeCompare(a.date)).map(b=>
+      `<div class="entryline row"><span>${b.date} · ${houseName(b.houseId)}</span><b class="num">${b.units}u = ₹${Number(b.amount).toLocaleString('en-IN')}</b></div>`).join('') || '<div class="empty">No bills logged in this period.</div>'}
+    <h3 style="font-size:13px;margin-top:10px">Received from tenants</h3>
+    ${elecEntries.sort((a,b)=>b.date.localeCompare(a.date)).map(x=>
+      `<div class="entryline row"><span>${x.date} · ${x.tenantName||houseName(x.houseId)}</span><b class="num">₹${Number(x.amount).toLocaleString('en-IN')}</b></div>`).join('') || '<div class="empty">No electricity received in this period.</div>'}
+  </div>`;
+  return html;
+}
+function updateReportFilter(){
+  reportFilter.houseId = document.getElementById('fHouse').value;
+  reportFilter.from = document.getElementById('fFrom').value;
+  reportFilter.to = document.getElementById('fTo').value;
+  render();
+}
+
+function renderFund(){
+  if(!DB.houses.length) return `<div class="empty">Add a house first to see its repair fund here.</div>`;
+  return DB.houses.map(h=>{
+    const {billed, received, profit} = houseElecTotals(h.id);
+    const exps = DB.expenses.filter(e=>e.houseId===h.id).sort((a,b)=>b.date.localeCompare(a.date));
+    const totExp = exps.reduce((s,e)=>s+Number(e.amount),0);
+    return `<div class="card"><h3>${h.name}</h3>
+      <div class="row"><span>Electricity received</span><b class="num">₹${received.toLocaleString('en-IN')}</b></div>
+      <div class="row"><span>Electricity billed</span><b class="num">₹${billed.toLocaleString('en-IN')}</b></div>
+      <div class="row"><span>Electricity profit → fund</span><b class="num pos">₹${profit.toLocaleString('en-IN')}</b></div>
+      <div class="row"><span>Repairs spent</span><b class="num neg">₹${totExp.toLocaleString('en-IN')}</b></div>
+      <div class="row"><span>Fund balance</span><b class="num">₹${(profit-totExp).toLocaleString('en-IN')}</b></div>
+      ${exps.length? `<hr class="divider">` + exps.map(e=>
+        `<div class="entryline row"><span>${e.date} — ${e.particular}</span><b class="num neg">₹${Number(e.amount).toLocaleString('en-IN')}</b></div>`
+      ).join('') : ''}
+    </div>`;
+  }).join('');
+}
+
+function renderArchive(){
+  const list = DB.tenants.filter(t=>t.status==='vacated');
+  if(!list.length) return `<div class="empty">Vacated tenants will appear here, with their full history kept.</div>`;
+  const secLabel = {cash:'Returned in cash',rent:'Adjusted to rent',electricity:'Adjusted to electricity',none:'Nothing to settle'};
+  return list.map(t=>{
+    const es = tenantEntries(t.id);
+    const totalPaid = es.reduce((s,e)=>s+Number(e.rent),0) + tenantElecReceipts(t.id).reduce((s,e)=>s+Number(e.amount),0);
+    const s = t.securitySettlement;
+    return `<div class="card"><h3>${t.name} <span class="tag">${t.serial||''} · vacated</span></h3>
+      <div class="row"><span>Room</span><b>${roomName(t.roomId)} · ${houseName(houseOfRoom(t.roomId))}</b></div>
+      <div class="row"><span>Stayed</span><b>${t.moveIn||'—'} → ${t.moveOut||'—'}</b></div>
+      <div class="row"><span>Total paid</span><b class="num">₹${totalPaid.toLocaleString('en-IN')}</b></div>
+      ${s? `<div class="row"><span>Security settled</span><b class="num">₹${Number(s.amount).toLocaleString('en-IN')} — ${secLabel[s.type]||s.type}</b></div>`:''}
+      <div class="row"><span>Entries kept</span><b>${es.length}</b></div>
+    </div>`;
+  }).join('');
+}
+
+function renderSetup(){
+  if(!DB.houses.length) return `<div class="empty">Tap + to add your first house (e.g. Santarashan).</div>`;
+  return DB.houses.map(h=>{
+    const rooms = DB.rooms.filter(r=>r.houseId===h.id);
+    return `<div class="card"><h3>${h.name}</h3>
+      ${rooms.map(r=>`<div class="row"><span>${r.name}</span><b>${DB.tenants.find(t=>t.roomId===r.id&&t.status!=='vacated')?'occupied':'vacant'}</b></div>`).join('') || '<div class="row"><span>No rooms yet</span></div>'}
+      <button class="btn ghost" style="margin-top:10px" onclick="openRoomModal('${h.id}')">+ Add room</button>
+    </div>`;
+  }).join('');
+}
+
+function renderNames(){
+  let html = '';
+  html += `<div class="card"><h3>Houses</h3>` + (DB.houses.map(h=>
+    `<div class="row"><span>${h.name}</span><span>
+      <button class="btn ghost" style="padding:5px 10px;margin:0" onclick="editHouse('${h.id}')">Rename</button>
+      <button class="btn danger" style="padding:5px 10px;margin:0" onclick="confirmDeleteHouse('${h.id}')">Delete</button>
+    </span></div>`
+  ).join('') || '<div class="row"><span>None yet</span></div>') + `</div>`;
+
+  html += `<div class="card"><h3>Rooms</h3>` + (DB.rooms.map(r=>
+    `<div class="row"><span>${r.name} <span class="tag">${houseName(r.houseId)}</span></span><span>
+      <button class="btn ghost" style="padding:5px 10px;margin:0" onclick="editRoom('${r.id}')">Rename</button>
+      <button class="btn danger" style="padding:5px 10px;margin:0" onclick="confirmDeleteRoom('${r.id}')">Delete</button>
+    </span></div>`
+  ).join('') || '<div class="row"><span>None yet</span></div>') + `</div>`;
+
+  html += `<div class="card"><h3>Tenants</h3>` + (DB.tenants.map(t=>
+    `<div class="row"><span>${t.name} <span class="tag">${t.serial||'—'}</span> <span class="tag">${t.status==='vacated'?'vacated':'active'}</span></span><span>
+      <button class="btn ghost" style="padding:5px 10px;margin:0" onclick="editTenant('${t.id}')">Edit</button>
+      <button class="btn danger" style="padding:5px 10px;margin:0" onclick="confirmDeleteTenant('${t.id}')">Delete</button>
+    </span></div>`
+  ).join('') || '<div class="row"><span>None yet</span></div>') + `</div>`;
+  return html;
+}
+function confirmDeleteHouse(id){
+  const h = DB.houses.find(x=>x.id===id);
+  const roomIds = DB.rooms.filter(r=>r.houseId===id).map(r=>r.id);
+  const tCount = DB.tenants.filter(t=>roomIds.includes(t.roomId)).length;
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Delete "${h.name}"?</h2>
+    <p style="font-size:13px;color:var(--red)">This permanently removes this house, its ${roomIds.length} room(s), ${tCount} tenant record(s) (active and archived), all their entries, and all repair/electricity records for this house. This cannot be undone.</p>
+    <p id="delErr" style="font-size:12px;color:var(--red)"></p>
+    <button class="btn danger" onclick="deleteHouse('${id}')">Yes, delete permanently</button>
+    <button class="btn ghost" onclick="closeModal()">Cancel</button>`);
+}
+function deleteHouse(id){
+  const roomIds = DB.rooms.filter(r=>r.houseId===id).map(r=>r.id);
+  const tenantIds = DB.tenants.filter(t=>roomIds.includes(t.roomId)).map(t=>t.id);
+  DB.entries = DB.entries.filter(e=>!tenantIds.includes(e.tenantId));
+  DB.tenants = DB.tenants.filter(t=>!roomIds.includes(t.roomId));
+  DB.elecBills = (DB.elecBills||[]).filter(x=>x.houseId!==id);
+  DB.elecReceipts = (DB.elecReceipts||[]).filter(x=>x.houseId!==id && !tenantIds.includes(x.tenantId));
+  DB.rooms = DB.rooms.filter(r=>r.houseId!==id);
+  DB.expenses = DB.expenses.filter(x=>x.houseId!==id);
+  DB.houses = DB.houses.filter(x=>x.id!==id);
+  save(); closeModal(); render();
+}
+function confirmDeleteRoom(id){
+  const r = DB.rooms.find(x=>x.id===id);
+  const t = DB.tenants.find(x=>x.roomId===id && x.status!=='vacated');
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Delete "${r.name}"?</h2>
+    <p style="font-size:13px;color:var(--red)">${t?`This room currently has an active tenant (${t.name}). Deleting it will also permanently delete that tenant and their records. `:''}This permanently removes the room and all its tenants (active and archived), their entries, and electricity meter records. This cannot be undone.</p>
+    <button class="btn danger" onclick="deleteRoom('${id}')">Yes, delete permanently</button>
+    <button class="btn ghost" onclick="closeModal()">Cancel</button>`);
+}
+function deleteRoom(id){
+  const tenantIds = DB.tenants.filter(t=>t.roomId===id).map(t=>t.id);
+  DB.entries = DB.entries.filter(e=>!tenantIds.includes(e.tenantId));
+  DB.elecReceipts = (DB.elecReceipts||[]).filter(x=>!tenantIds.includes(x.tenantId));
+  DB.tenants = DB.tenants.filter(t=>t.roomId!==id);
+  DB.rooms = DB.rooms.filter(r=>r.id!==id);
+  save(); closeModal(); render();
+}
+function confirmDeleteTenant(id){
+  const t = DB.tenants.find(x=>x.id===id);
+  const eCount = tenantEntries(id).length;
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Delete "${t.name}"?</h2>
+    <p style="font-size:13px;color:var(--red)">This permanently removes this tenant and all ${eCount} recorded entries, including archived history. This cannot be undone. If you just want to keep their record but mark them gone, use "Mark vacated" instead.</p>
+    <button class="btn danger" onclick="deleteTenant('${id}')">Delete permanently</button>`);
+}
+function deleteTenant(id){
+  DB.entries = DB.entries.filter(e=>e.tenantId!==id);
+  DB.elecReceipts = (DB.elecReceipts||[]).filter(x=>x.tenantId!==id);
+  DB.tenants = DB.tenants.filter(t=>t.id!==id);
+  save(); closeModal(); render();
+}
+function editHouse(id){
+  const h = DB.houses.find(x=>x.id===id);
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Edit house</h2>
+    <label>House name</label><input id="ehName" value="${h.name}">
+    <label>Initial (used for new tenant serials — existing serials won't change)</label><input id="ehInitial" value="${h.initial||''}">
+    <button class="btn" onclick="saveHouseEdit('${id}')">Save</button>`);
+}
+function saveHouseEdit(id){
+  const h = DB.houses.find(x=>x.id===id);
+  h.name = document.getElementById('ehName').value.trim() || h.name;
+  h.initial = document.getElementById('ehInitial').value.trim().toUpperCase() || h.initial;
+  save(); closeModal(); render();
+}
+function editRoom(id){
+  const r = DB.rooms.find(x=>x.id===id);
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Rename room</h2>
+    <label>Room name</label><input id="erName" value="${r.name}">
+    <button class="btn" onclick="saveRoomEdit('${id}')">Save</button>`);
+}
+function saveRoomEdit(id){
+  const r = DB.rooms.find(x=>x.id===id);
+  r.name = document.getElementById('erName').value.trim() || r.name;
+  save(); closeModal(); render();
+}
+function editTenant(id){
+  const t = DB.tenants.find(x=>x.id===id);
+  const roomOpts = DB.rooms.map(r=>`<option value="${r.id}" ${r.id===t.roomId?'selected':''}>${r.name} — ${houseName(r.houseId)}</option>`).join('');
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Edit tenant <span class="tag">${t.serial||''}</span></h2>
+    <label>Name</label><input id="etName" value="${t.name}">
+    <label>Room</label><select id="etRoom">${roomOpts}</select>
+    <label>Phone</label><input id="etPhone" value="${t.phone||''}">
+    <label>Security deposit (₹)</label><input id="etSecurity" type="number" value="${t.security||0}">
+    <label>Rent due date</label><input id="etDue" value="${t.dueDay||''}">
+    <label>Move-in date</label><input id="etMoveIn" type="date" value="${t.moveIn||''}">
+    <label>Notes / comments</label><input id="etNotes" value="${(t.notes||'').replace(/"/g,'&quot;')}">
+    <label>Verification link</label><input id="etVerify" value="${t.verificationLink||''}" placeholder="Google Drive / photo link">
+    <label>Rent agreement link</label><input id="etAgreement" value="${t.agreementLink||''}" placeholder="Google Drive / doc link">
+    <button class="btn" onclick="saveTenantEdit('${id}')">Save</button>`);
+}
+function saveTenantEdit(id){
+  const t = DB.tenants.find(x=>x.id===id);
+  t.name = document.getElementById('etName').value.trim() || t.name;
+  t.roomId = document.getElementById('etRoom').value;
+  t.phone = document.getElementById('etPhone').value;
+  t.security = document.getElementById('etSecurity').value||0;
+  t.dueDay = document.getElementById('etDue').value;
+  t.moveIn = document.getElementById('etMoveIn').value;
+  t.notes = document.getElementById('etNotes').value;
+  t.verificationLink = document.getElementById('etVerify').value;
+  t.agreementLink = document.getElementById('etAgreement').value;
+  save(); closeModal(); render();
+}
+
+function renderBackup(){
+  const s = DB.settings;
+  return `<div class="card"><h3>Backup your records</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">Save a copy of everything — houses, tenants, monthly entries and repair expenses — to your device.</p>
+    <button class="btn" onclick="exportCSV()">Download as Excel (.csv)</button><br>
+    <button class="btn ghost" onclick="exportPDF()">Save as PDF</button><br>
+    <button class="btn ghost" onclick="backupToDrive()">Backup to Google Drive</button><br>
+    <button class="btn ghost" onclick="exportJSON()">Download full backup (.json)</button>
+  </div>
+  <div class="card"><h3>Daily auto-backup</h3>
+    <label style="display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:13px">
+      <input type="checkbox" id="autoBackupToggle" ${s.autoBackupEnabled?'checked':''} onchange="toggleAutoBackup()" style="width:auto">
+      Auto-download a backup once a day
+    </label>
+    <p style="font-size:12px;color:var(--ink-soft);margin-top:8px">Last auto-backup: ${s.lastBackupDate||'never'}. When on, opening the app on a new day silently downloads a fresh .csv backup — on Wi-Fi only, on phones where the browser can tell the connection type (not all can, in which case it'll also run on mobile data). A web page genuinely can't push files into Drive by itself in the background — it can only download to your device. For the file to land in Drive automatically after that, turn on "Auto-backup" in your phone's Google Drive app for the Downloads folder — or use the manual "Backup to Google Drive" button above anytime.</p>
+  </div>
+  <div class="card"><h3>Import data</h3>
+    <p style="font-size:13px;color:var(--ink-soft)">Restore from a full backup file (.json) — useful if you switch phones or clear browser data. This replaces everything currently in the app.</p>
+    <input type="file" id="importFile" accept="application/json" style="display:none" onchange="handleImportFile(this)">
+    <button class="btn ghost" onclick="document.getElementById('importFile').click()">Import backup file (.json)</button>
+    <p style="font-size:12px;color:var(--ink-soft);margin-top:10px">If the file picker above doesn't open, open your .json backup file in another app, copy all its text, and paste it here instead:</p>
+    <label>Paste backup JSON</label>
+    <textarea id="importText" rows="4" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:2px;background:#fff;font-family:'Space Mono',monospace;font-size:12px;color:var(--ink)" placeholder='{"houses":[...'></textarea>
+    <button class="btn ghost" style="margin-top:8px" onclick="importFromPastedText()">Import from pasted text</button>
+  </div>
+  <div class="empty">CSV opens in Excel/Google Sheets. PDF opens your device's print/share sheet — choose "Save as PDF". The .json backup is the only format this app can re-import.</div>`;
+}
+function toggleAutoBackup(){
+  DB.settings.autoBackupEnabled = document.getElementById('autoBackupToggle').checked;
+  save(); render();
+}
+function exportJSON(){
+  downloadFile('rent-accounts-full-backup-'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(DB, null, 2));
+}
+let pendingImport = null;
+function parseAndConfirmImport(text){
+  try{
+    const parsed = JSON.parse(text);
+    if(!parsed || typeof parsed!=='object' || !Array.isArray(parsed.houses)) throw new Error('bad shape');
+    pendingImport = parsed;
+    openModal(`<button class="close" onclick="closeModal()">×</button><h2>Import backup?</h2>
+      <p style="font-size:13px;color:var(--red)">This will replace ALL current data with this file: ${parsed.houses.length} houses, ${(parsed.tenants||[]).length} tenants, ${(parsed.entries||[]).length} rent entries. This cannot be undone.</p>
+      <button class="btn danger" onclick="confirmImport()">Yes, replace all data</button>
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>`);
+  }catch(err){
+    openModal(`<button class="close" onclick="closeModal()">×</button><h2>Import failed</h2>
+      <p style="font-size:13px;color:var(--red)">That doesn't look like valid Rent Accounts backup JSON (from "Download full backup" above). Make sure you copied the whole file, starting with { and ending with }.</p>`);
+  }
+}
+function handleImportFile(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { parseAndConfirmImport(e.target.result); input.value=''; };
+  reader.readAsText(file);
+}
+function importFromPastedText(){
+  const text = document.getElementById('importText').value.trim();
+  if(!text){ openModal(`<button class="close" onclick="closeModal()">×</button><h2>Nothing pasted</h2><p style="font-size:13px;color:var(--ink-soft)">Paste the backup JSON into the box first.</p>`); return; }
+  parseAndConfirmImport(text);
+}
+function confirmImport(){
+  if(!pendingImport) return;
+  DB = pendingImport;
+  DB.settings = DB.settings || {autoBackupEnabled:false, lastBackupDate:null};
+  DB.elecBills = DB.elecBills || []; DB.elecReceipts = DB.elecReceipts || [];
+  pendingImport = null;
+  save(); closeModal(); tab='dash'; render();
+}
+function csvEscape(v){ return '"' + String(v??'').replace(/"/g,'""') + '"'; }
+function buildCSV(){
+  let rows = [['Serial','House','Room','Tenant','Status','Month','Date','Rent']];
+  DB.entries.forEach(e=>{
+    const t = DB.tenants.find(x=>x.id===e.tenantId); if(!t) return;
+    rows.push([t.serial||'', houseName(houseOfRoom(t.roomId)), roomName(t.roomId), t.name, t.status, e.month, e.date, e.rent]);
+  });
+  rows.push([]); rows.push(['Electricity Meter (per house)']); rows.push(['House','Type','Date','Units','Amount','Per Unit / Flat']);
+  (DB.elecBills||[]).forEach(b=> rows.push([houseName(b.houseId),'Bill',b.date,b.units,b.amount,b.units?(b.amount/b.units).toFixed(2):'']));
+  (DB.elecReceipts||[]).forEach(x=> rows.push([houseName(x.houseId),'Received',x.date,'',x.amount,x.tenantName||'']));
+  rows.push([]); rows.push(['Repair Expenses']); rows.push(['House','Date','Particular','Amount']);
+  DB.expenses.forEach(x=> rows.push([houseName(x.houseId), x.date, x.particular, x.amount]));
+  const csv = rows.map(r=>r.map(csvEscape).join(',')).join('\n');
+  const filename = 'rent-accounts-backup-'+new Date().toISOString().slice(0,10)+'.csv';
+  return {csv, filename};
+}
+async function downloadFile(filename, data){
+  try{
+    const downloads = await claude.use('downloads');
+    if(downloads){ await downloads.save({filename, data}); return; }
+  }catch(e){}
+  const blob = new Blob([data], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+async function exportCSV(){
+  const {csv, filename} = buildCSV();
+  await downloadFile(filename, csv);
+}
+async function backupToDrive(){
+  const {csv, filename} = buildCSV();
+  await downloadFile(filename, csv);
+  window.open('https://drive.google.com/drive/my-drive', '_blank');
+}
+function exportPDF(){
+  const w = window.open('', '_blank');
+  let body = `<h1>Rent Accounts — Backup</h1><p>${new Date().toLocaleDateString()}</p>`;
+  DB.houses.forEach(h=>{
+    body += `<h2>${h.name}</h2>`;
+    const roomIds = DB.rooms.filter(r=>r.houseId===h.id).map(r=>r.id);
+    DB.tenants.filter(t=>roomIds.includes(t.roomId)).forEach(t=>{
+      body += `<h3>${t.serial||''} — ${t.name} (${roomName(t.roomId)}) — ${t.status}</h3><table border="1" cellpadding="4" style="border-collapse:collapse;width:100%;font-size:12px">
+        <tr><th>Month</th><th>Date</th><th>Rent</th></tr>`;
+      tenantEntries(t.id).forEach(e=>{
+        body += `<tr><td>${e.month}</td><td>${e.date}</td><td>₹${e.rent}</td></tr>`;
+      });
+      body += `</table>`;
+      const elecs = tenantElecReceipts(t.id);
+      if(elecs.length){
+        body += `<table border="1" cellpadding="4" style="border-collapse:collapse;width:100%;font-size:12px"><tr><th>Electricity paid</th><th>Amount</th></tr>`;
+        elecs.forEach(x=> body += `<tr><td>${x.date}</td><td>₹${x.amount}</td></tr>`);
+        body += `</table>`;
+      }
+    });
+    const exps = DB.expenses.filter(x=>x.houseId===h.id);
+    if(exps.length){
+      body += `<h3>Repairs</h3><table border="1" cellpadding="4" style="border-collapse:collapse;width:100%;font-size:12px"><tr><th>Date</th><th>Particular</th><th>Amount</th></tr>`;
+      exps.forEach(x=> body += `<tr><td>${x.date}</td><td>${x.particular}</td><td>₹${x.amount}</td></tr>`);
+      body += `</table>`;
+    }
+  });
+  w.document.write(`<html><head><title>Rent Accounts Backup</title></head><body style="font-family:Georgia,serif">${body}</body></html>`);
+  w.document.close(); w.focus();
+  setTimeout(()=>w.print(), 400);
+}
+
+// ---------- Modals ----------
+function openModal(html){ document.getElementById('modal').innerHTML = html; document.getElementById('modalBg').classList.add('open'); }
+function closeModal(){ document.getElementById('modalBg').classList.remove('open'); }
+document.getElementById('modalBg').onclick = e=>{ if(e.target.id==='modalBg') closeModal(); };
+
+function openHouseModal(){
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>New house</h2>
+    <label>House name</label><input id="hName" placeholder="e.g. Chimni Mill">
+    <label>Initial (short code for tenant serial numbers)</label><input id="hInitial" placeholder="e.g. CM">
+    <button class="btn" onclick="saveHouse()">Save house</button>`);
+}
+function saveHouse(){
+  const name = document.getElementById('hName').value.trim();
+  if(!name) return;
+  const initial = document.getElementById('hInitial').value.trim().toUpperCase() || name.slice(0,2).toUpperCase();
+  DB.houses.push({id:uid(), name, initial, tenantCounter:0}); save(); closeModal(); render();
+}
+
+function openRoomModal(houseId){
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>New room</h2>
+    <label>Room name</label><input id="rName" placeholder="e.g. Window room">
+    <button class="btn" onclick="saveRoom('${houseId}')">Save room</button>`);
+}
+function saveRoom(houseId){
+  const name = document.getElementById('rName').value.trim();
+  if(!name) return;
+  DB.rooms.push({id:uid(), houseId, name}); save(); closeModal(); render();
+}
+
+function openTenantModal(){
+  if(!DB.rooms.length){ openHouseModal(); return; }
+  const roomOpts = DB.rooms.map(r=>`<option value="${r.id}">${r.name} — ${houseName(r.houseId)}</option>`).join('');
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>New tenant</h2>
+    <label>Name</label><input id="tName">
+    <label>Room</label><select id="tRoom">${roomOpts}</select>
+    <label>Security deposit (₹)</label><input id="tSecurity" type="number">
+    <label>Rent due date</label><input id="tDue" placeholder="e.g. 1st of every month">
+    <label>Move-in date</label><input id="tMoveIn" type="date">
+    <button class="btn" onclick="saveTenant()">Save tenant</button>`);
+}
+function saveTenant(){
+  const name=document.getElementById('tName').value.trim();
+  if(!name) return;
+  const roomId = document.getElementById('tRoom').value;
+  const house = DB.houses.find(x=>x.id===houseOfRoom(roomId));
+  house.tenantCounter = (house.tenantCounter||0) + 1;
+  const serial = `${house.initial||'T'}-${house.tenantCounter}`;
+  DB.tenants.push({id:uid(), serial, name, roomId,
+    security:document.getElementById('tSecurity').value||0, dueDay:document.getElementById('tDue').value,
+    moveIn:document.getElementById('tMoveIn').value, status:'active'});
+  save(); closeModal(); render();
+}
+
+function openTenantDetail(tid){
+  const t = DB.tenants.find(x=>x.id===tid);
+  const es = tenantEntries(tid);
+  const elecs = tenantElecReceipts(tid);
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>${t.name} <span class="tag">${t.serial||'—'}</span></h2>
+    <p style="color:var(--ink-soft);font-family:'Space Mono',monospace;font-size:12px">${roomName(t.roomId)} · ${houseName(houseOfRoom(t.roomId))}${t.phone?' · '+t.phone:''}</p>
+    <div class="row"><span>Security held</span><b class="num">₹${Number(t.security||0).toLocaleString('en-IN')}</b></div>
+    ${t.notes? `<div class="row" style="display:block"><span>Notes</span><div style="margin-top:3px">${t.notes}</div></div>`:''}
+    ${t.verificationLink? `<div class="row"><span>Verification</span><a href="${t.verificationLink}" target="_blank" style="color:var(--accent)">Open link</a></div>`:''}
+    ${t.agreementLink? `<div class="row"><span>Rent agreement</span><a href="${t.agreementLink}" target="_blank" style="color:var(--accent)">Open link</a></div>`:''}
+    <div style="margin-top:10px">
+      <button class="btn" onclick="openRentModal('${tid}')">+ Add rent</button>
+      <button class="btn ghost" onclick="openTenantElecModal('${tid}')">+ Add electricity payment</button><br>
+      <button class="btn ghost" onclick="editTenant('${tid}')">Edit details / notes / links</button>
+      ${t.status!=='vacated'? `<button class="btn ghost" onclick="openVacateModal('${tid}')">Mark vacated</button>`:''}
+    </div>
+    <hr class="divider">
+    <h3 style="font-size:13px">Rent history</h3>
+    ${es.map(e=>`<div class="entryline row"><span>${e.month} · ${e.date}</span><b class="num">₹${Number(e.rent).toLocaleString('en-IN')}</b></div>`).join('') || '<div class="empty">No rent entries yet.</div>'}
+    <h3 style="font-size:13px;margin-top:14px">Electricity payments</h3>
+    ${elecs.map(x=>`<div class="entryline row"><span>${x.date}</span><b class="num">₹${Number(x.amount).toLocaleString('en-IN')}</b></div>`).join('') || '<div class="empty">No electricity payments yet.</div>'}`);
+}
+
+function openRentModal(tid){
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>New rent entry</h2>
+    <label>Month (e.g. Sep 2026)</label><input id="eMonth">
+    <label>Rent received date</label><input id="eDate" type="date">
+    <label>Rent received (₹)</label><input id="eRent" type="number">
+    <button class="btn" onclick="saveRentEntry('${tid}')">Save rent</button>`);
+}
+function saveRentEntry(tid){
+  DB.entries.push({id:uid(), tenantId:tid, month:document.getElementById('eMonth').value,
+    date:document.getElementById('eDate').value, rent:Number(document.getElementById('eRent').value||0)});
+  save(); render(); openTenantDetail(tid);
+}
+
+function openTenantElecModal(tid){
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Electricity payment</h2>
+    <p style="font-size:12px;color:var(--ink-soft)">This logs into the house's Electricity tab automatically, tagged with ${DB.tenants.find(x=>x.id===tid).name}'s name.</p>
+    <label>Date tenant paid</label><input id="teDate" type="date">
+    <label>Amount received (₹)</label><input id="teAmount" type="number">
+    <button class="btn" onclick="saveTenantElec('${tid}')">Save payment</button>`);
+}
+function saveTenantElec(tid){
+  const t = DB.tenants.find(x=>x.id===tid);
+  DB.elecReceipts = DB.elecReceipts||[];
+  DB.elecReceipts.push({id:uid(), houseId:houseOfRoom(t.roomId), tenantId:tid, tenantName:t.name,
+    date:document.getElementById('teDate').value, amount:Number(document.getElementById('teAmount').value||0)});
+  save(); render(); openTenantDetail(tid);
+}
+
+function openVacateModal(tid){
+  const t = DB.tenants.find(x=>x.id===tid);
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Mark vacated</h2>
+    <label>Move-out date</label><input id="vDate" type="date">
+    <label>Security held (₹)</label><input id="vSecAmount" type="number" value="${t.security||0}">
+    <label>How is the security settled?</label>
+    <select id="vSecType">
+      <option value="cash">Returned in cash / bank transfer</option>
+      <option value="rent">Adjusted against rent</option>
+      <option value="electricity">Adjusted against electricity</option>
+      <option value="none">Nothing to settle (already handled)</option>
+    </select>
+    <button class="btn danger" onclick="vacate('${tid}')">Confirm — move to archive</button>`);
+}
+function vacate(tid){
+  const t = DB.tenants.find(x=>x.id===tid);
+  const moveOut = document.getElementById('vDate').value;
+  const secType = document.getElementById('vSecType').value;
+  const secAmount = Number(document.getElementById('vSecAmount').value||0);
+  if(secAmount>0 && secType==='rent'){
+    DB.entries.push({id:uid(), tenantId:tid, month:'Security adjustment', date:moveOut, rent:secAmount});
+  } else if(secAmount>0 && secType==='electricity'){
+    DB.elecReceipts = DB.elecReceipts||[];
+    DB.elecReceipts.push({id:uid(), houseId:houseOfRoom(t.roomId), tenantId:tid, tenantName:t.name, date:moveOut, amount:secAmount});
+  }
+  t.securitySettlement = {type:secType, amount:secAmount, date:moveOut};
+  t.status='vacated'; t.moveOut = moveOut;
+  save(); closeModal(); tab='archive'; render();
+}
+
+function openExpenseModal(){
+  if(!DB.houses.length){ openHouseModal(); return; }
+  const opts = DB.houses.map(h=>`<option value="${h.id}">${h.name}</option>`).join('');
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>New repair expense</h2>
+    <label>House</label><select id="xHouse">${opts}</select>
+    <label>Date</label><input id="xDate" type="date">
+    <label>Particular</label><input id="xPart" placeholder="e.g. Water motor">
+    <label>Amount (₹)</label><input id="xAmt" type="number">
+    <button class="btn" onclick="saveExpense()">Save expense</button>`);
+}
+function saveExpense(){
+  DB.expenses.push({id:uid(), houseId:document.getElementById('xHouse').value, date:document.getElementById('xDate').value,
+    particular:document.getElementById('xPart').value, amount:Number(document.getElementById('xAmt').value||0)});
+  save(); closeModal(); render();
+}
+
+render();
+
+function checkAutoBackup(){
+  const s = DB.settings;
+  if(!s || !s.autoBackupEnabled) return;
+  const today = new Date().toISOString().slice(0,10);
+  if(s.lastBackupDate === today) return;
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const wifiOk = (conn && conn.type) ? conn.type==='wifi' : true;
+  if(!wifiOk) return;
+  const {csv, filename} = buildCSV();
+  downloadFile(filename, csv);
+  s.lastBackupDate = today;
+  save();
+}
+checkAutoBackup();
+
+// Swipe between tabs
+(function(){
+  const el = document.getElementById('main');
+  let sx=0, sy=0;
+  el.addEventListener('touchstart', e=>{ sx=e.touches[0].clientX; sy=e.touches[0].clientY; }, {passive:true});
+  el.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)*1.5 && !document.getElementById('modalBg').classList.contains('open')){
+      const i = tabsDef.findIndex(t=>t[0]===tab);
+      if(dx < 0 && i < tabsDef.length-1){ tab = tabsDef[i+1][0]; render(); }
+      if(dx > 0 && i > 0){ tab = tabsDef[i-1][0]; render(); }
+    }
+  }, {passive:true});
+})();
+</script>
+</body>
+</html>
