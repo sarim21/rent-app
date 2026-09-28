@@ -4,70 +4,87 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rent Accounts</title>
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#8C3B2E">
-<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#4F46E5">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F6F1E4; --line:#D8CBA8; --ink:#241E17; --ink-soft:#6B6152;
-  --red:#8C3B2E; --green:#3E6B4B; --card:#FFFDF6; --accent:#B4832A;
+  --paper:#F8FAFC; --card:#FFFFFF; --ink:#111827; --ink-soft:#6B7280; --line:#E5E7EB;
+  --primary:#4F46E5; --accent:#4F46E5; --success:#16A34A; --warning:#F59E0B; --danger:#DC2626;
+  --green:#16A34A; --red:#DC2626; --input-bg:#FFFFFF;
+  --shadow:0 1px 2px rgba(17,24,39,.06),0 1px 8px rgba(17,24,39,.04);
+  color-scheme:light;
   box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root[data-theme="dark"]{
+  --paper:#0B1220; --card:#151E32; --ink:#F1F5F9; --ink-soft:#94A3B8; --line:#26324A;
+  --primary:#6366F1; --accent:#818CF8; --success:#4ADE80; --warning:#FBBF24; --danger:#F87171;
+  --green:#4ADE80; --red:#F87171; --input-bg:#0B1220; --shadow:none;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 html,body{height:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:'Source Serif 4',Georgia,serif;
-  background-image:repeating-linear-gradient(var(--paper) 0 27px, var(--line) 27px 28px);
-}
-header{position:sticky;top:0;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 12px;background:var(--paper);
-  border-bottom:2px solid var(--ink); z-index:5;}
-header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.3px}
-header p{margin:2px 0 0;color:var(--ink-soft);font-size:12.5px;font-family:'Space Mono',monospace}
-nav{display:flex;gap:6px;overflow-x:auto;padding:10px 18px 0;background:var(--paper);position:sticky;top:64px;z-index:5;border-bottom:1px solid var(--line)}
-nav button{flex:0 0 auto;background:none;border:none;padding:8px 4px 10px;font-family:'Space Mono',monospace;font-size:12px;
-  color:var(--ink-soft);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
-nav button.active{color:var(--ink);border-bottom-color:var(--accent);font-weight:700}
-main{padding:16px 16px 90px;max-width:640px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:14px 16px;margin-bottom:12px;
-  box-shadow:2px 2px 0 rgba(36,30,23,.05)}
-.card h3{margin:0 0 8px;font-size:15px;display:flex;justify-content:space-between;align-items:baseline}
-.tag{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--ink-soft);border:1px solid var(--line);padding:2px 6px;border-radius:2px}
-.row{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:13px;padding:3px 0;color:var(--ink-soft)}
-.row b{color:var(--ink);font-weight:400}
-.num{font-family:'Space Mono',monospace}
-.pos{color:var(--green)} .neg{color:var(--red)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+header{position:relative;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 8px}
+header h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.3px}
+header p{margin:2px 0 0;color:var(--ink-soft);font-size:12.5px}
+.themebtn{position:absolute;right:14px;top:calc(12px + env(safe-area-inset-top,0px));background:var(--card);border:1px solid var(--line);border-radius:999px;width:38px;height:38px;font-size:17px;cursor:pointer;line-height:1}
+nav{display:flex;gap:4px;overflow-x:auto;padding:4px 14px 0;background:var(--paper);position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line);scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;background:none;border:none;padding:10px 8px 11px;font:inherit;font-size:13px;font-weight:600;color:var(--ink-soft);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+nav button.active{color:var(--accent);border-bottom-color:var(--primary)}
+main{padding:16px 16px 96px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tag{font-size:10.5px;color:var(--ink-soft);border:1px solid var(--line);padding:2px 7px;border-radius:999px;font-weight:600;white-space:nowrap}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13.5px;padding:4px 0;color:var(--ink-soft)}
+.row b{color:var(--ink);font-weight:500;text-align:right}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.pos{color:var(--success)!important} .neg{color:var(--danger)!important} .warn{color:var(--warning)!important}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.big{font-size:26px;font-weight:700;font-family:'Space Mono',monospace}
-label{display:block;font-size:12px;color:var(--ink-soft);margin:10px 0 4px;font-family:'Space Mono',monospace}
-input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:2px;background:#fff;
-  font-family:'Space Mono',monospace;font-size:14px;color:var(--ink)}
-.btn{display:inline-block;margin-top:14px;background:var(--ink);color:var(--paper);border:none;padding:11px 18px;
-  border-radius:2px;font-family:'Space Mono',monospace;font-size:13px;cursor:pointer}
-.btn.ghost{background:none;border:1px solid var(--ink);color:var(--ink)}
-.btn.danger{background:var(--red)}
-.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--accent);color:#fff;
-  border:none;width:52px;height:52px;border-radius:50%;font-size:26px;box-shadow:0 3px 8px rgba(0,0,0,.25);cursor:pointer}
-.empty{color:var(--ink-soft);font-size:13px;text-align:center;padding:30px 10px;font-family:'Space Mono',monospace}
-.divider{border:none;border-top:1px dashed var(--line);margin:10px 0}
-.modal-bg{position:fixed;inset:0;background:rgba(36,30,23,.45);display:none;align-items:flex-end;z-index:20}
+.big{font-size:28px;font-weight:800;letter-spacing:-.5px}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--input-bg);color:var(--ink);font:inherit;font-size:15px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);outline-offset:-1px}
+input[type=checkbox]{width:auto}
+textarea{font-family:ui-monospace,Menlo,monospace;font-size:12px;resize:vertical}
+.btn{display:inline-block;margin:14px 6px 0 0;background:var(--primary);color:#fff;border:1px solid var(--primary);padding:10px 16px;border-radius:8px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border-color:var(--primary)}
+.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.mini{background:none;border:1px solid var(--line);color:var(--accent);border-radius:6px;padding:2px 8px;font:inherit;font-size:11px;font-weight:600;margin-left:8px;cursor:pointer}
+.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--primary);color:#fff;border:none;width:54px;height:54px;border-radius:50%;font-size:28px;box-shadow:0 4px 12px rgba(79,70,229,.4);cursor:pointer}
+.empty{color:var(--ink-soft);font-size:13px;text-align:center;padding:26px 10px;line-height:1.5}
+.hint{font-size:12.5px;color:var(--ink-soft);line-height:1.5;margin:4px 0 8px}
+.divider{border:none;border-top:1px solid var(--line);margin:10px 0}
+.modal-bg{position:fixed;inset:0;background:rgba(17,24,39,.5);display:none;align-items:flex-end;z-index:20}
 .modal-bg.open{display:flex}
-.modal{background:var(--card);width:100%;max-height:88vh;overflow-y:auto;border-radius:12px 12px 0 0;padding:18px 18px 24px}
+.modal{background:var(--card);color:var(--ink);width:100%;max-height:88vh;overflow-y:auto;border-radius:16px 16px 0 0;padding:18px 18px 28px}
 .modal h2{margin:0 0 4px;font-size:18px}
-.close{float:right;background:none;border:none;font-size:20px;color:var(--ink-soft);cursor:pointer}
+.close{float:right;background:none;border:none;font-size:24px;line-height:1;color:var(--ink-soft);cursor:pointer}
 .entryline{border-bottom:1px solid var(--line);padding:8px 0}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){--paper:#1B1712;--card:#242019;--ink:#EDE6D6;--ink-soft:#9A8F79;--line:#3A3325;--card:#242019}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--ink-soft);margin:6px 0 2px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+#printArea{display:none}
+@media print{
+  html,body{height:auto}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block;color:#000;background:#fff;font-family:system-ui,sans-serif;padding:8px}
+  #printArea table{border-collapse:collapse;width:100%;font-size:12px;margin-bottom:12px}
+  #printArea th,#printArea td{border:1px solid #999;padding:4px 6px;text-align:left}
 }
-:root[data-theme="dark"]{--paper:#1B1712;--card:#242019;--ink:#EDE6D6;--ink-soft:#9A8F79;--line:#3A3325}
 </style>
+<script src="./xlsx.full.min.js"></script>
 </head>
 <body>
 <header>
   <h1>Rent Accounts</h1>
   <p id="subtitle">rent · electricity · repairs</p>
+  <button class="themebtn" id="themeBtn" onclick="toggleTheme()" aria-label="Switch light or dark mode"></button>
 </header>
 <nav id="tabs"></nav>
 <main id="main"></main>
@@ -81,7 +98,8 @@ function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){}
 function seed(){ return { houses:[], rooms:[], tenants:[], entries:[], expenses:[], elecBills:[], elecReceipts:[], settings:{autoBackupEnabled:false,lastBackupDate:null} }; }
 let DB = load();
 DB.settings = DB.settings || {autoBackupEnabled:false, lastBackupDate:null};
-DB.elecBills = DB.elecBills || []; DB.elecReceipts = DB.elecReceipts || [];
+DB.fundAdds = DB.fundAdds || []; DB.elecBills = DB.elecBills || []; DB.elecReceipts = DB.elecReceipts || [];
+if(!DB.settings.theme) DB.settings.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
 let tab = 'dash';
@@ -189,9 +207,14 @@ if('serviceWorker' in navigator){ window.addEventListener('load', ()=> navigator
 let reportFilter = {houseId:'', from:'', to:''};
 
 function render(){
+  DB.fundAdds = DB.fundAdds||[];
   const nav = document.getElementById('tabs');
-  nav.innerHTML = tabsDef.map(([id,label])=>`<button data-t="${id}" class="${tab===id?'active':''}">${label}</button>`).join('');
-  nav.querySelectorAll('button').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render();});
+  const mainTabs=tabsDef.slice(0,3), menuTabs=tabsDef.slice(3), inMenu=menuTabs.some(t=>t[0]===tab);
+  nav.innerHTML = `<button id="burger" style="font-size:18px;padding:8px 10px 9px" class="${inMenu?'active':''}" aria-label="Menu">☰${inMenu?' <span style="font-size:13px">'+menuTabs.find(t=>t[0]===tab)[1]+'</span>':''}</button>`
+    + mainTabs.map(([id,label])=>`<button data-t="${id}" class="${tab===id?'active':''}">${label}</button>`).join('');
+  nav.querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>{tab=b.dataset.t;render();});
+  document.getElementById('burger').onclick=()=>openModal(`<button class="close" onclick="closeModal()">×</button><h2>Menu</h2>`
+    + menuTabs.map(([id,label])=>`<button class="btn ${tab===id?'':'ghost'}" style="display:block;width:100%;margin:8px 0 0;text-align:left" onclick="tab='${id}';closeModal();render()">${label}</button>`).join(''));
   const m = document.getElementById('main');
   if(tab==='dash') m.innerHTML = renderDash();
   if(tab==='tenants') m.innerHTML = renderTenants();
@@ -229,42 +252,205 @@ function houseElecTotals(houseId){
   return { billed, received, profit: received-billed };
 }
 
-function renderDash(){
-  const totRent = DB.entries.reduce((s,e)=>s+Number(e.rent||0),0);
-  const totBilled = (DB.elecBills||[]).reduce((s,b)=>s+Number(b.amount),0);
-  const totReceived = (DB.elecReceipts||[]).reduce((s,b)=>s+Number(b.amount),0);
-  const totExp = DB.expenses.reduce((s,e)=>s+Number(e.amount),0);
-  let html = `<div class="card"><h3>Total collected <span class="tag">all time</span></h3>
-    <div class="big">₹${(totRent+totReceived).toLocaleString('en-IN')}</div>
+// ---------- theme ----------
+function applyTheme(){
+  const t = DB.settings.theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  const b = document.getElementById('themeBtn'); if(b) b.textContent = t === 'dark' ? '☀️' : '🌙';
+  const m = document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute('content', t === 'dark' ? '#0B1220' : '#4F46E5');
+}
+function toggleTheme(){
+  DB.settings.theme = DB.settings.theme === 'dark' ? 'light' : 'dark';
+  save(); applyTheme();
+}
+
+// ---------- fix mistakes: edit / delete any entry ----------
+const REC = {
+  rent:       {arr:()=>DB.entries,      title:'rent entry',          f:[['month','Month','text'],['date','Date received','date'],['rent','Rent (₹)','number']]},
+  elecReceipt:{arr:()=>DB.elecReceipts, title:'electricity payment', f:[['date','Date received','date'],['amount','Amount (₹)','number']]},
+  elecBill:   {arr:()=>DB.elecBills,    title:'electricity bill',    f:[['date','Bill date','date'],['units','Units','number'],['amount','Bill amount (₹)','number']]},
+  fundAdd:    {arr:()=>DB.fundAdds,     title:'repair fund amount', f:[['date','Date','date'],['note','Note','text'],['amount','Amount (₹)','number']]},
+  expense:    {arr:()=>DB.expenses,     title:'repair expense',      f:[['date','Date','date'],['particular','Particular','text'],['amount','Amount (₹)','number']]}
+};
+function openEditRecord(kind, id, back){
+  const k = REC[kind], r = k.arr().find(x=>x.id===id); if(!r) return;
+  const esc = v => String(v==null?'':v).replace(/"/g,'&quot;');
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Edit ${k.title}</h2>`
+    + k.f.map(([key,label,type])=>`<label>${label}</label><input id="rec_${key}" type="${type}" value="${esc(r[key])}">`).join('')
+    + `<button class="btn" onclick="saveRecord('${kind}','${id}','${back||''}')">Save changes</button>
+       <button class="btn danger" onclick="confirmDeleteRecord('${kind}','${id}','${back||''}')">Delete</button>`);
+}
+function saveRecord(kind, id, back){
+  const k = REC[kind], r = k.arr().find(x=>x.id===id); if(!r) return;
+  k.f.forEach(([key,,type])=>{ const v = document.getElementById('rec_'+key).value; r[key] = type==='number' ? Number(v||0) : v; });
+  save(); afterRecordChange(back);
+}
+function confirmDeleteRecord(kind, id, back){
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Delete this ${REC[kind].title}?</h2>
+    <p class="hint" style="color:var(--danger)">It is removed permanently and all totals update.</p>
+    <button class="btn danger" onclick="deleteRecord('${kind}','${id}','${back||''}')">Yes, delete</button>
+    <button class="btn ghost" onclick="openEditRecord('${kind}','${id}','${back||''}')">Cancel</button>`);
+}
+function deleteRecord(kind, id, back){
+  const arr = REC[kind].arr(), i = arr.findIndex(x=>x.id===id);
+  if(i > -1) arr.splice(i, 1);
+  save(); afterRecordChange(back);
+}
+function afterRecordChange(back){ render(); if(back) openTenantDetail(back); else closeModal(); }
+
+// ---------- monthly earnings bar chart ----------
+const inr = n => '₹'+Number(n||0).toLocaleString('en-IN');
+const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function ym(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function defChart(){ const n=new Date(); return {from:ym(new Date(n.getFullYear(),n.getMonth()-11,1)), to:ym(n)}; }
+let chartF = defChart();
+let dashF = {from:'', to:''};
+function inP(d,f){ return (!f.from && !f.to) ? true : inRange(d,f.from,f.to); }
+function setChart(){
+  const a=document.getElementById('cFrom').value, b=document.getElementById('cTo').value;
+  if(a) chartF.from=a; if(b) chartF.to=b; render();
+}
+function resetChart(){ chartF=defChart(); render(); }
+function renderChart(){
+  let a=chartF.from, b=chartF.to; if(a>b){ const t=a; a=b; b=t; }
+  const keys=[]; let y=+a.slice(0,4), m=+a.slice(5)-1;
+  while((y+'-'+String(m+1).padStart(2,'0'))<=b && keys.length<240){ keys.push(y+'-'+String(m+1).padStart(2,'0')); m++; if(m>11){m=0;y++;} }
+  const rent={}, elec={}; keys.forEach(k=>{rent[k]=0;elec[k]=0;});
+  DB.entries.forEach(e=>{ const k=(e.date||'').slice(0,7); if(k in rent) rent[k]+=Number(e.rent||0); });
+  (DB.elecReceipts||[]).forEach(x=>{ const k=(x.date||'').slice(0,7); if(k in elec) elec[k]+=Number(x.amount||0); });
+  const n=keys.length, max=Math.max(1,...keys.map(k=>rent[k]+elec[k])), H=130;
+  const fmt=v=>v>=1000?(Math.round(v/100)/10)+'k':String(v);
+  const tr=keys.reduce((s,k)=>s+rent[k],0), te=keys.reduce((s,k)=>s+elec[k],0);
+  const bars=keys.map(k=>{ const r=rent[k], el=elec[k], tot=r+el;
+    return `<div style="flex:1 0 32px;display:flex;flex-direction:column;align-items:center;gap:3px">
+      <div style="font-size:10px;font-weight:600;height:13px">${tot?fmt(tot):''}</div>
+      <div style="height:${H}px;width:100%;max-width:30px;display:flex;flex-direction:column;justify-content:flex-end">
+        <div style="height:${Math.round(el/max*H)}px;background:var(--success);border-radius:4px 4px 0 0"></div>
+        <div style="height:${Math.round(r/max*H)}px;background:var(--primary);${el?'':'border-radius:4px 4px 0 0'}"></div></div>
+      <div style="font-size:10.5px;color:var(--ink-soft);white-space:nowrap">${MN[+k.slice(5)-1]}${n>12?' '+k.slice(2,4):''}</div></div>`; }).join('');
+  return `<div class="card"><h3>Monthly earnings <span class="tag">${n} month${n!==1?'s':''}</span></h3>
+    <div class="grid2"><div><label style="margin-top:0">From month</label><input id="cFrom" type="month" value="${a}" onchange="setChart()"></div>
+    <div><label style="margin-top:0">To month</label><input id="cTo" type="month" value="${b}" onchange="setChart()"></div></div>
+    <button class="btn ghost" style="margin-top:8px;padding:5px 12px;font-size:12px" onclick="resetChart()">Reset to last 1 year</button>
+    <div class="legend"><span><i style="background:var(--primary)"></i>Rent</span><span><i style="background:var(--success)"></i>Electricity</span></div>
+    <div style="display:flex;gap:4px;align-items:flex-end;margin-top:6px;overflow-x:auto;padding-bottom:2px">${bars}</div>
     <hr class="divider">
-    <div class="row"><span>Rent</span><b class="num">₹${totRent.toLocaleString('en-IN')}</b></div>
-    <div class="row"><span>Electricity received from flats</span><b class="num">₹${totReceived.toLocaleString('en-IN')}</b></div>
-    <div class="row"><span>Electricity actually billed</span><b class="num">₹${totBilled.toLocaleString('en-IN')}</b></div>
-    <div class="row"><span>Electricity profit</span><b class="num pos">₹${(totReceived-totBilled).toLocaleString('en-IN')}</b></div>
-    <div class="row"><span>Repairs spent</span><b class="num neg">₹${totExp.toLocaleString('en-IN')}</b></div>
-    <div class="row"><span>Net repair fund</span><b class="num">₹${(totReceived-totBilled-totExp).toLocaleString('en-IN')}</b></div>
-  </div>`;
-  const activeSec = activeTenants();
-  const totSecurity = activeSec.reduce((s,t)=>s+Number(t.security||0),0);
-  html += `<div class="card"><h3>Security outstanding</h3>
-    <div class="big">₹${totSecurity.toLocaleString('en-IN')}</div>
+    <div class="row"><span>Average rent per month</span><b class="num pos">${inr(Math.round(tr/Math.max(n,1)))}</b></div>
+    <div class="row"><span>Average electricity per month</span><b class="num">${inr(Math.round(te/Math.max(n,1)))}</b></div>
+    <div class="row"><span>Total rent in period</span><b class="num">${inr(tr)}</b></div>
+    <div class="row"><span>Total rent + electricity</span><b class="num pos">${inr(tr+te)}</b></div></div>`;
+}
+let dashView='overview', recentN=20;
+function recentItems(){
+  const tn=id=>{const t=DB.tenants.find(x=>x.id===id);return t?t.name:'—';};
+  return [
+    ...DB.entries.map(e=>({d:e.date||'',kind:'rent',id:e.id,h:(()=>{const t=DB.tenants.find(x=>x.id===e.tenantId);return t?houseOfRoom(t.roomId):'';})(),ic:'🏠',t:'Rent · '+tn(e.tenantId),sub:e.month||'',amt:Number(e.rent||0),c:'pos',sg:'+'})),
+    ...(DB.elecReceipts||[]).map(e=>({d:e.date||'',kind:'elecReceipt',id:e.id,h:e.houseId||'',ic:'⚡',t:'Electricity paid · '+(e.tenantName||houseName(e.houseId)),sub:houseName(e.houseId),amt:Number(e.amount||0),c:'pos',sg:'+'})),
+    ...(DB.elecBills||[]).map(e=>({d:e.date||'',kind:'elecBill',id:e.id,h:e.houseId||'',ic:'🧾',t:'Electricity bill · '+houseName(e.houseId),sub:(e.units||0)+' units',amt:Number(e.amount||0),c:'warn',sg:'-'})),
+    ...DB.expenses.map(e=>({d:e.date||'',kind:'expense',id:e.id,h:e.houseId||'',ic:'🔧',t:'Repair · '+(e.particular||''),sub:houseName(e.houseId),amt:Number(e.amount||0),c:'neg',sg:'-'})),
+    ...(DB.fundAdds||[]).map(e=>({d:e.date||'',kind:'fundAdd',id:e.id,h:e.houseId||'',ic:'💰',t:'Fund added · '+(e.note||houseName(e.houseId)),sub:houseName(e.houseId),amt:Number(e.amount||0),c:'pos',sg:'+'}))
+  ].sort((a,b)=>b.d.localeCompare(a.d));
+}
+let recentF={type:'',houseId:'',from:'',to:'',dir:'',q:''}, recentFOpen=false;
+const REC_TYPES=[['rent','🏠 Rent'],['elecReceipt','⚡ Electricity paid'],['elecBill','🧾 Electricity bill'],['expense','🔧 Repair'],['fundAdd','💰 Fund added']];
+function recentActiveCount(){ return Object.values(recentF).filter(v=>v).length; }
+function recentFiltered(){
+  const f=recentF, q=f.q.trim().toLowerCase();
+  return recentItems().filter(x=>
+    (!f.type||x.kind===f.type) &&
+    (!f.houseId||x.h===f.houseId) &&
+    (!f.dir||(f.dir==='in'?x.sg==='+':x.sg==='-')) &&
+    ((!f.from&&!f.to)||inRange(x.d,f.from,f.to)) &&
+    (!q||(x.t+' '+(x.sub||'')).toLowerCase().includes(q)));
+}
+function setRecentF(){
+  const g=id=>document.getElementById(id).value;
+  recentF={type:g('rfType'),houseId:g('rfHouse'),dir:g('rfDir'),from:g('rfFrom'),to:g('rfTo'),q:g('rfQ')};
+  recentN=20; render();
+}
+function clearRecentF(){ recentF={type:'',houseId:'',from:'',to:'',dir:'',q:''}; recentN=20; render(); }
+function toggleRecentF(){ recentFOpen=!recentFOpen; render(); }
+function renderRecent(){
+  const all=recentFiltered(), list=all.slice(0,recentN), n=recentActiveCount(), f=recentF;
+  const inSum=all.filter(x=>x.sg==='+').reduce((s,x)=>s+x.amt,0), outSum=all.filter(x=>x.sg==='-').reduce((s,x)=>s+x.amt,0);
+  const typeOpts=`<option value="">All types</option>`+REC_TYPES.map(([k,l])=>`<option value="${k}" ${f.type===k?'selected':''}>${l}</option>`).join('');
+  const houseOpts=`<option value="">All houses</option>`+DB.houses.map(h=>`<option value="${h.id}" ${f.houseId===h.id?'selected':''}>${h.name}</option>`).join('');
+  const dirOpts=[['','Money in & out'],['in','Money in only (+)'],['out','Money out only (−)']].map(([k,l])=>`<option value="${k}" ${f.dir===k?'selected':''}>${l}</option>`).join('');
+  const btn=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+    <button class="btn ${recentFOpen||n?'':'ghost'}" style="margin:0;padding:7px 16px;border-radius:999px" onclick="toggleRecentF()">⚙ Filter${n?' ('+n+')':''}</button>
+    ${n?`<button class="btn ghost" style="margin:0;padding:7px 14px;border-radius:999px" onclick="clearRecentF()">Clear</button>`:''}</div>`;
+  const panel=recentFOpen?`<div class="card"><h3>Filter activity <span class="tag">${n} active</span></h3>
+    <label style="margin-top:0">Type</label><select id="rfType" onchange="setRecentF()">${typeOpts}</select>
+    <label>House</label><select id="rfHouse" onchange="setRecentF()">${houseOpts}</select>
+    <label>Direction</label><select id="rfDir" onchange="setRecentF()">${dirOpts}</select>
+    <div class="grid2"><div><label>From date</label><input id="rfFrom" type="date" value="${f.from}" onchange="setRecentF()"></div>
+    <div><label>To date</label><input id="rfTo" type="date" value="${f.to}" onchange="setRecentF()"></div></div>
+    <label>Search (name, house, note)</label><input id="rfQ" type="search" placeholder="e.g. plumber, Santarashan" value="${(f.q||'').replace(/"/g,'&quot;')}" onchange="setRecentF()">
+    <p class="hint" style="margin-top:8px">Search applies when you press Enter or tap outside the box.</p></div>`:'';
+  const summary=n?`<div class="card"><h3>Filtered summary <span class="tag">${all.length} item${all.length!==1?'s':''}</span></h3>
+    <div class="row"><span>Money in (+)</span><b class="num pos">${inr(inSum)}</b></div>
+    <div class="row"><span>Money out (−)</span><b class="num neg">${inr(outSum)}</b></div>
+    <hr class="divider">
+    <div class="row"><span>Net</span><b class="num ${inSum-outSum>=0?'pos':'neg'}">${inSum-outSum<0?'−':''}${inr(Math.abs(inSum-outSum))}</b></div></div>`:'';
+  if(!recentItems().length) return `<div class="empty">No transactions yet.</div>`;
+  if(!all.length) return btn+panel+`<div class="empty">No activity matches these filters.</div>`;
+  return btn+panel+summary+`<div class="card"><h3>Recent activity <span class="tag">${list.length} of ${all.length}</span></h3>
+    ${list.map(x=>`<div class="entryline row" onclick="openEditRecord('${x.kind}','${x.id}','')" style="cursor:pointer">
+      <span style="display:flex;gap:9px;align-items:center;min-width:0"><span style="font-size:17px">${x.ic}</span>
+      <span style="min-width:0"><span style="color:var(--ink);display:block;overflow:hidden;text-overflow:ellipsis">${x.t}</span>
+      <span style="font-size:11.5px">${x.d||'no date'}${x.sub?' · '+x.sub:''}</span></span></span>
+      <b class="num ${x.c}">${x.sg}${inr(x.amt)}</b></div>`).join('')}
+    ${all.length>recentN?`<button class="btn ghost" onclick="recentN+=20;render()">Show more</button>`:''}
+    <p class="hint" style="margin-top:8px">Tap any item to edit or delete it.</p></div>`;
+}
+function renderDash(){
+  const pill=(id,l)=>`<button class="btn ${dashView===id?'':'ghost'}" style="margin:0 6px 12px 0;padding:7px 16px;border-radius:999px" onclick="dashView='${id}';render()">${l}</button>`;
+  return pill('overview','Overview')+pill('recent','Recent Activity')+(dashView==='recent'?renderRecent():renderDashMain());
+}
+function setDash(){ dashF.from=document.getElementById('dFrom').value; dashF.to=document.getElementById('dTo').value; render(); }
+function allTimeDash(){ dashF={from:'',to:''}; render(); }
+function fundAddSum(hid,f){ return (DB.fundAdds||[]).filter(x=>(!hid||x.houseId===hid)&&inP(x.date,f)).reduce((s,x)=>s+Number(x.amount||0),0); }
+function houseP(hid,f){
+  const billed=(DB.elecBills||[]).filter(b=>b.houseId===hid&&inP(b.date,f)).reduce((s,b)=>s+Number(b.amount),0);
+  const rec=(DB.elecReceipts||[]).filter(b=>b.houseId===hid&&inP(b.date,f)).reduce((s,b)=>s+Number(b.amount),0);
+  const exp=DB.expenses.filter(x=>x.houseId===hid&&inP(x.date,f)).reduce((s,e)=>s+Number(e.amount),0);
+  const add=fundAddSum(hid,f);
+  return {billed,rec,profit:rec-billed,exp,add,bal:rec-billed+add-exp};
+}
+function renderDashMain(){
+  const f=dashF, all=(!f.from&&!f.to);
+  const totRent=DB.entries.filter(e=>inP(e.date,f)).reduce((s,e)=>s+Number(e.rent||0),0);
+  const totBilled=(DB.elecBills||[]).filter(b=>inP(b.date,f)).reduce((s,b)=>s+Number(b.amount),0);
+  const totReceived=(DB.elecReceipts||[]).filter(b=>inP(b.date,f)).reduce((s,b)=>s+Number(b.amount),0);
+  const totExp=DB.expenses.filter(e=>inP(e.date,f)).reduce((s,e)=>s+Number(e.amount),0);
+  const totAdd=fundAddSum('',f);
+  let html=`<div class="card"><h3>Period <span class="tag">${all?'all time':(f.from||'start')+' → '+(f.to||'today')}</span></h3>
+    <div class="grid2"><div><label style="margin-top:0">From</label><input id="dFrom" type="date" value="${f.from}" onchange="setDash()"></div>
+    <div><label style="margin-top:0">To</label><input id="dTo" type="date" value="${f.to}" onchange="setDash()"></div></div>
+    ${all?'':`<button class="btn ghost" style="margin-top:8px;padding:5px 12px;font-size:12px" onclick="allTimeDash()">Show all time</button>`}</div>
+  <div class="card"><h3>Total collected <span class="tag">${all?'all time':'selected period'}</span></h3>
+    <div class="big pos">${inr(totRent+totReceived)}</div><hr class="divider">
+    <div class="row"><span>Rent</span><b class="num">${inr(totRent)}</b></div>
+    <div class="row"><span>Electricity received from flats</span><b class="num">${inr(totReceived)}</b></div>
+    <div class="row"><span>Electricity actually billed</span><b class="num">${inr(totBilled)}</b></div>
+    <div class="row"><span>Electricity profit</span><b class="num pos">${inr(totReceived-totBilled)}</b></div>
+    <div class="row"><span>Repair fund added manually</span><b class="num">${inr(totAdd)}</b></div>
+    <div class="row"><span>Repairs spent</span><b class="num neg">${inr(totExp)}</b></div>
+    <div class="row"><span>Net repair fund</span><b class="num">${inr(totReceived-totBilled+totAdd-totExp)}</b></div></div>`;
+  html+=renderChart();
+  const activeSec=activeTenants(), totSecurity=activeSec.reduce((s,t)=>s+Number(t.security||0),0);
+  html+=`<div class="card"><h3>Security outstanding</h3><div class="big">${inr(totSecurity)}</div>
     <p style="font-size:12px;color:var(--ink-soft);margin:2px 0 8px">Held for ${activeSec.length} active tenant${activeSec.length!==1?'s':''} — refundable when they vacate.</p>
-    ${activeSec.filter(t=>t.security>0).map(t=>`<div class="row"><span>${t.name} <span class="tag">${t.serial||''}</span></span><b class="num">₹${Number(t.security).toLocaleString('en-IN')}</b></div>`).join('') || '<div class="empty">No deposits on record.</div>'}
-  </div>`;
-  if(!DB.houses.length){
-    html += `<div class="empty">No houses set up yet.<br>Go to "Houses" to add your first property and rooms.</div>`;
-    return html;
-  }
-  html += DB.houses.map(h=>{
-    const {profit} = houseElecTotals(h.id);
-    const hExp = DB.expenses.filter(x=>x.houseId===h.id).reduce((s,e)=>s+Number(e.amount),0);
-    const roomIds = DB.rooms.filter(r=>r.houseId===h.id).map(r=>r.id);
-    const nTenants = DB.tenants.filter(t=>roomIds.includes(t.roomId)&&t.status!=='vacated').length;
-    return `<div class="card"><h3>${h.name} <span class="tag">${nTenants} tenant${nTenants!==1?'s':''}</span></h3>
-      <div class="row"><span>Electricity profit</span><b class="num pos">₹${profit.toLocaleString('en-IN')}</b></div>
-      <div class="row"><span>Repairs spent</span><b class="num neg">₹${hExp.toLocaleString('en-IN')}</b></div>
-      <div class="row"><span>Fund balance</span><b class="num">₹${(profit-hExp).toLocaleString('en-IN')}</b></div>
-    </div>`;
+    ${activeSec.filter(t=>t.security>0).map(t=>`<div class="row"><span>${t.name} <span class="tag">${t.serial||''}</span></span><b class="num">${inr(t.security)}</b></div>`).join('')||'<div class="empty">No deposits on record.</div>'}</div>`;
+  if(!DB.houses.length) return html+`<div class="empty">No houses set up yet.<br>Go to "Houses" to add your first property and rooms.</div>`;
+  html+=DB.houses.map(h=>{
+    const p=houseP(h.id,f), roomIds=DB.rooms.filter(r=>r.houseId===h.id).map(r=>r.id);
+    const nT=DB.tenants.filter(t=>roomIds.includes(t.roomId)&&t.status!=='vacated').length;
+    return `<div class="card"><h3>${h.name} <span class="tag">${nT} tenant${nT!==1?'s':''}</span></h3>
+      <div class="row"><span>Electricity profit</span><b class="num pos">${inr(p.profit)}</b></div>
+      <div class="row"><span>Fund added manually</span><b class="num">${inr(p.add)}</b></div>
+      <div class="row"><span>Repairs spent</span><b class="num neg">${inr(p.exp)}</b></div>
+      <div class="row"><span>Fund balance</span><b class="num">${inr(p.bal)}</b></div></div>`;
   }).join('');
   return html;
 }
@@ -313,8 +499,8 @@ function renderElectricity(){
         <button class="btn ghost" style="padding:6px 10px;margin:0" onclick="openElecReceiptModal('${h.id}')">+ Received</button>
       </div>
       ${bills.length||receipts.length? `<hr class="divider">
-      ${bills.map(b=>`<div class="entryline row"><span>Bill · ${b.date}</span><b class="num">${b.units}u @ ₹${b.units?(b.amount/b.units).toFixed(2):'—'} = ₹${b.amount}</b></div>`).join('')}
-      ${receipts.map(x=>`<div class="entryline row"><span>Received · ${x.date}${x.tenantName?' · '+x.tenantName:''}${x.linkedEntryId?' <span class="tag">auto</span>':''}</span><b class="num pos">₹${x.amount}</b></div>`).join('')}` : ''}
+      ${bills.map(b=>`<div class="entryline row"><span>Bill · ${b.date}</span><span><b class="num">${b.units}u @ ₹${b.units?(b.amount/b.units).toFixed(2):'—'} = ₹${b.amount}</b><button class="mini" onclick="openEditRecord('elecBill','${b.id}','')">Edit</button></span></div>`).join('')}
+      ${receipts.map(x=>`<div class="entryline row"><span>Received · ${x.date}${x.tenantName?' · '+x.tenantName:''}${x.linkedEntryId?' <span class="tag">auto</span>':''}</span><span><b class="num pos">₹${x.amount}</b><button class="mini" onclick="openEditRecord('elecReceipt','${x.id}','')">Edit</button></span></div>`).join('')}` : ''}
     </div>`;
   }).join('');
 }
@@ -383,6 +569,7 @@ function renderReports(){
     <label>From</label><input id="fFrom" type="date" value="${f.from||''}" onchange="updateReportFilter()">
     <label>To</label><input id="fTo" type="date" value="${f.to||''}" onchange="updateReportFilter()">
   </div>`;
+  html += renderRoomEarnings(f);
   if(!f.from && !f.to) return html + `<div class="empty">Pick a "From" and/or "To" date above to see rent and electricity received in that period.</div>`;
   html += `<div class="card"><h3>Rent received</h3><div class="big">₹${totRent.toLocaleString('en-IN')}</div><hr class="divider">
     ${rentEntries.sort((a,b)=>b.date.localeCompare(a.date)).map(e=>{ const t=DB.tenants.find(x=>x.id===e.tenantId);
@@ -409,40 +596,115 @@ function updateReportFilter(){
   render();
 }
 
+function openFundAddModal(){
+  if(!DB.houses.length){ openHouseModal(); return; }
+  const opts=DB.houses.map(h=>`<option value="${h.id}">${h.name}</option>`).join('');
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Add repair fund amount</h2>
+    <label>House</label><select id="faHouse">${opts}</select>
+    <label>Date</label><input id="faDate" type="date" value="${new Date().toISOString().slice(0,10)}">
+    <label>Note (optional)</label><input id="faNote" placeholder="e.g. Opening balance">
+    <label>Amount (₹)</label><input id="faAmt" type="number">
+    <button class="btn" onclick="saveFundAdd()">Save</button>`);
+}
+function saveFundAdd(){
+  DB.fundAdds.push({id:uid(),houseId:document.getElementById('faHouse').value,date:document.getElementById('faDate').value,
+    note:document.getElementById('faNote').value,amount:Number(document.getElementById('faAmt').value||0)});
+  save(); closeModal(); render();
+}
 function renderFund(){
   if(!DB.houses.length) return `<div class="empty">Add a house first to see its repair fund here.</div>`;
-  return DB.houses.map(h=>{
-    const {billed, received, profit} = houseElecTotals(h.id);
-    const exps = DB.expenses.filter(e=>e.houseId===h.id).sort((a,b)=>b.date.localeCompare(a.date));
-    const totExp = exps.reduce((s,e)=>s+Number(e.amount),0);
+  return `<button class="btn" style="margin:0 0 12px" onclick="openFundAddModal()">+ Add fund amount</button>
+  <button class="btn ghost" style="margin:0 0 12px" onclick="openExpenseModal()">+ Repair expense</button>` + DB.houses.map(h=>{
+    const {billed,received,profit}=houseElecTotals(h.id);
+    const adds=DB.fundAdds.filter(a=>a.houseId===h.id), exps=DB.expenses.filter(e=>e.houseId===h.id);
+    const totAdd=adds.reduce((s,a)=>s+Number(a.amount),0), totExp=exps.reduce((s,e)=>s+Number(e.amount),0);
+    const lines=[...adds.map(a=>({d:a.date,kind:'fundAdd',id:a.id,txt:'Added — '+(a.note||'fund amount'),amt:a.amount,neg:false})),
+      ...exps.map(e=>({d:e.date,kind:'expense',id:e.id,txt:e.particular,amt:e.amount,neg:true}))].sort((a,b)=>(b.d||'').localeCompare(a.d||''));
     return `<div class="card"><h3>${h.name}</h3>
-      <div class="row"><span>Electricity received</span><b class="num">₹${received.toLocaleString('en-IN')}</b></div>
-      <div class="row"><span>Electricity billed</span><b class="num">₹${billed.toLocaleString('en-IN')}</b></div>
-      <div class="row"><span>Electricity profit → fund</span><b class="num pos">₹${profit.toLocaleString('en-IN')}</b></div>
-      <div class="row"><span>Repairs spent</span><b class="num neg">₹${totExp.toLocaleString('en-IN')}</b></div>
-      <div class="row"><span>Fund balance</span><b class="num">₹${(profit-totExp).toLocaleString('en-IN')}</b></div>
-      ${exps.length? `<hr class="divider">` + exps.map(e=>
-        `<div class="entryline row"><span>${e.date} — ${e.particular}</span><b class="num neg">₹${Number(e.amount).toLocaleString('en-IN')}</b></div>`
-      ).join('') : ''}
+      <div class="row"><span>Electricity received</span><b class="num">${inr(received)}</b></div>
+      <div class="row"><span>Electricity billed</span><b class="num">${inr(billed)}</b></div>
+      <div class="row"><span>Electricity profit → fund</span><b class="num pos">${inr(profit)}</b></div>
+      <div class="row"><span>Fund added manually</span><b class="num pos">${inr(totAdd)}</b></div>
+      <div class="row"><span>Repairs spent</span><b class="num neg">${inr(totExp)}</b></div>
+      <div class="row"><span>Fund balance</span><b class="num">${inr(profit+totAdd-totExp)}</b></div>
+      ${lines.length?'<hr class="divider">'+lines.map(l=>`<div class="entryline row"><span>${l.d} — ${l.txt}</span><span><b class="num ${l.neg?'neg':'pos'}">${l.neg?'':'+'}${inr(l.amt)}</b><button class="mini" onclick="openEditRecord('${l.kind}','${l.id}','')">Edit</button></span></div>`).join(''):''}
     </div>`;
   }).join('');
 }
 
+let archF={from:'',to:''};
+function setArch(){ archF.from=document.getElementById('aFrom').value; archF.to=document.getElementById('aTo').value; render(); }
+function tenantTx(tid){
+  return [...tenantEntries(tid).map(e=>({date:e.date||'',label:'Rent · '+(e.month||''),amt:Number(e.rent||0),k:'r'})),
+    ...tenantElecReceipts(tid).map(x=>({date:x.date||'',label:'Electricity',amt:Number(x.amount||0),k:'e'}))].sort((a,b)=>b.date.localeCompare(a.date));
+}
+function fileSafe(t){ return String(t.name||'tenant').replace(/[^\w]+/g,'_'); }
+function tenantExcel(tid){
+  const t=DB.tenants.find(x=>x.id===tid); if(!t) return;
+  if(!window.XLSX){ notice('Excel not ready','The Excel component has not loaded yet. Wait a moment and try again.'); return; }
+  const es=tenantEntries(tid), el=tenantElecReceipts(tid);
+  const tr=es.reduce((s,e)=>s+Number(e.rent||0),0), te=el.reduce((s,e)=>s+Number(e.amount||0),0);
+  const wb=XLSX.utils.book_new();
+  const add=(n,h,rows)=>{ const ws=XLSX.utils.json_to_sheet(rows,{header:h}); ws['!cols']=h.map(x=>({wch:Math.max(14,x.length+2)})); XLSX.utils.book_append_sheet(wb,ws,n); };
+  add('Summary',['Field','Value'],[{Field:'Tenant',Value:t.name},{Field:'Serial',Value:t.serial||''},{Field:'House',Value:houseName(houseOfRoom(t.roomId))},{Field:'Room',Value:roomName(t.roomId)},
+    {Field:'Move in',Value:t.moveIn||''},{Field:'Move out',Value:t.moveOut||''},{Field:'Total rent',Value:tr},{Field:'Total electricity',Value:te},{Field:'Total paid',Value:tr+te}]);
+  add('Rent',['Month','Date','Rent'],es.map(e=>({Month:e.month||'',Date:e.date||'',Rent:Number(e.rent||0)})));
+  add('Electricity',['Date','Amount'],el.map(x=>({Date:x.date||'',Amount:Number(x.amount||0)})));
+  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  saveBlob('payments-'+fileSafe(t)+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+}
+function tenantPDF(tid){
+  const t=DB.tenants.find(x=>x.id===tid); if(!t) return;
+  const tbl=(h,rows)=>`<table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
+  const es=tenantEntries(tid), el=tenantElecReceipts(tid);
+  const tr=es.reduce((s,e)=>s+Number(e.rent||0),0), te=el.reduce((s,e)=>s+Number(e.amount||0),0);
+  let body=`<h1>${t.name} ${t.serial?'('+t.serial+')':''} — Payments</h1><p>${roomName(t.roomId)} · ${houseName(houseOfRoom(t.roomId))} · Stay: ${t.moveIn||'—'} → ${t.moveOut||'present'}</p>
+    <p><b>Total rent ₹${tr} · Electricity ₹${te} · Total paid ₹${tr+te}</b></p><h3>Rent</h3>`
+    +tbl(['Month','Date','Rent'],es.map(e=>[e.month||'',e.date||'','₹'+e.rent]))+'<h3>Electricity</h3>'+tbl(['Date','Amount'],el.map(x=>[x.date||'','₹'+x.amount]));
+  let area=document.getElementById('printArea'); if(!area){ area=document.createElement('div'); area.id='printArea'; document.body.appendChild(area); }
+  area.innerHTML=body; window.print();
+}
+function renderRoomEarnings(f){
+  const per=!!(f.from||f.to);
+  const rooms=DB.rooms.filter(r=>!f.houseId||r.houseId===f.houseId);
+  if(!rooms.length) return '';
+  const rows=rooms.map(r=>{
+    const tids=DB.tenants.filter(t=>t.roomId===r.id).map(t=>t.id);
+    const rn=DB.entries.filter(e=>tids.includes(e.tenantId)), en=(DB.elecReceipts||[]).filter(x=>tids.includes(x.tenantId));
+    const S=(a,k,p)=>a.filter(x=>!p||inRange(x.date,f.from,f.to)).reduce((s,x)=>s+Number(x[k]||0),0);
+    const ar=S(rn,'rent'), ae=S(en,'amount'), pr=S(rn,'rent',1), pe=S(en,'amount',1);
+    return `<div class="entryline"><div class="row"><span><b style="font-weight:700">${r.name}</b> · ${houseName(r.houseId)}</span><b class="num pos">${inr(ar+ae)}</b></div>
+      <div class="row" style="padding:0"><span>All time: rent ${inr(ar)} · electricity ${inr(ae)}</span></div>
+      ${per?`<div class="row" style="padding:0"><span>Selected period: rent ${inr(pr)} · electricity ${inr(pe)}</span><b class="num">${inr(pr+pe)}</b></div>`:''}</div>`;
+  }).join('');
+  return `<div class="card"><h3>Earnings by room <span class="tag">all time${per?' + period':''}</span></h3>
+    <p class="hint">Pick dates above to also see each room's earnings for that period. Electricity counts only when logged against a tenant.</p>${rows}</div>`;
+}
 function renderArchive(){
-  const list = DB.tenants.filter(t=>t.status==='vacated');
+  const list=DB.tenants.filter(t=>t.status==='vacated');
   if(!list.length) return `<div class="empty">Vacated tenants will appear here, with their full history kept.</div>`;
-  const secLabel = {cash:'Returned in cash',rent:'Adjusted to rent',electricity:'Adjusted to electricity',none:'Nothing to settle'};
-  return list.map(t=>{
-    const es = tenantEntries(t.id);
-    const totalPaid = es.reduce((s,e)=>s+Number(e.rent),0) + tenantElecReceipts(t.id).reduce((s,e)=>s+Number(e.amount),0);
-    const s = t.securitySettlement;
+  const secLabel={cash:'Returned in cash',rent:'Adjusted to rent',electricity:'Adjusted to electricity',none:'Nothing to settle'};
+  const f=archF, per=!!(f.from||f.to);
+  let html=`<div class="card"><h3>Period <span class="tag">${per?'filtered':'full stay'}</span></h3>
+    <div class="grid2"><div><label style="margin-top:0">From</label><input id="aFrom" type="date" value="${f.from}" onchange="setArch()"></div>
+    <div><label style="margin-top:0">To</label><input id="aTo" type="date" value="${f.to}" onchange="setArch()"></div></div>
+    <p class="hint">Optional — see what each tenant paid within a period, as well as during their whole stay.</p></div>`;
+  return html+list.map(t=>{
+    const tx=tenantTx(t.id), inP2=tx.filter(x=>inRange(x.date,f.from,f.to));
+    const sum=(a,k)=>a.filter(x=>!k||x.k===k).reduce((s,x)=>s+x.amt,0);
+    const s=t.securitySettlement, shown=per?inP2:tx;
     return `<div class="card"><h3>${t.name} <span class="tag">${t.serial||''} · vacated</span></h3>
       <div class="row"><span>Room</span><b>${roomName(t.roomId)} · ${houseName(houseOfRoom(t.roomId))}</b></div>
       <div class="row"><span>Stayed</span><b>${t.moveIn||'—'} → ${t.moveOut||'—'}</b></div>
-      <div class="row"><span>Total paid</span><b class="num">₹${totalPaid.toLocaleString('en-IN')}</b></div>
-      ${s? `<div class="row"><span>Security settled</span><b class="num">₹${Number(s.amount).toLocaleString('en-IN')} — ${secLabel[s.type]||s.type}</b></div>`:''}
-      <div class="row"><span>Entries kept</span><b>${es.length}</b></div>
-    </div>`;
+      <div class="row"><span>Paid during whole stay</span><b class="num">${inr(sum(tx))}</b></div>
+      <div class="row"><span>· Rent</span><b class="num">${inr(sum(tx,'r'))}</b></div>
+      <div class="row"><span>· Electricity</span><b class="num">${inr(sum(tx,'e'))}</b></div>
+      ${per?`<div class="row"><span>Paid in selected period</span><b class="num pos">${inr(sum(inP2))}</b></div>
+      <div class="row"><span>· Rent / Electricity</span><b class="num">${inr(sum(inP2,'r'))} / ${inr(sum(inP2,'e'))}</b></div>`:''}
+      ${s?`<div class="row"><span>Security settled</span><b class="num">${inr(s.amount)} — ${secLabel[s.type]||s.type}</b></div>`:''}
+      <details style="margin-top:6px"><summary style="cursor:pointer;color:var(--accent);font-size:13px;font-weight:600">${per?'Transactions in period':'All transactions'} (${shown.length})</summary>
+        ${shown.map(x=>`<div class="entryline row"><span>${x.date} · ${x.label}</span><b class="num">${inr(x.amt)}</b></div>`).join('')||'<div class="empty">No transactions.</div>'}</details>
+      <button class="btn ghost" onclick="tenantExcel('${t.id}')">Excel</button><button class="btn ghost" onclick="tenantPDF('${t.id}')">PDF</button></div>`;
   }).join('');
 }
 
@@ -585,139 +847,166 @@ function saveTenantEdit(id){
   save(); closeModal(); render();
 }
 
+function notice(title, text){
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>${title}</h2><p class="hint">${text}</p><button class="btn" onclick="closeModal()">OK</button>`);
+}
 function renderBackup(){
   const s = DB.settings;
-  return `<div class="card"><h3>Backup your records</h3>
-    <p style="font-size:13px;color:var(--ink-soft)">Save a copy of everything — houses, tenants, monthly entries and repair expenses — to your device.</p>
-    <button class="btn" onclick="exportCSV()">Download as Excel (.csv)</button><br>
-    <button class="btn ghost" onclick="exportPDF()">Save as PDF</button><br>
-    <button class="btn ghost" onclick="backupToDrive()">Backup to Google Drive</button><br>
-    <button class="btn ghost" onclick="exportJSON()">Download full backup (.json)</button>
+  return `<div class="card"><h3>Backup &amp; restore</h3>
+    <p class="hint">The <b>.json backup</b> is the file you use to bring everything back on a new phone or after reinstalling the app.</p>
+    <button class="btn" onclick="exportJSON()">Download backup (.json)</button>
+    <button class="btn ghost" onclick="shareBackup()">Share / save to Drive</button>
+  </div>
+  <div class="card"><h3>Restore from backup</h3>
+    <p class="hint">Choose your .json backup file. This replaces everything currently in the app.</p>
+    <input type="file" id="importFile" accept=".json,application/json,text/plain,*/*" style="display:none" onchange="handleImportFile(this)">
+    <button class="btn" onclick="document.getElementById('importFile').click()">Choose backup file</button>
+    <p class="hint" style="margin-top:14px">File picker not working? Open the .json file in any app, copy all the text, and paste it here:</p>
+    <textarea id="importText" rows="4" placeholder='{"houses":[...'></textarea>
+    <button class="btn ghost" onclick="importFromPastedText()">Restore from pasted text</button>
+  </div>
+  <div class="card"><h3>Reports for reading</h3>
+    <p class="hint">Excel has a separate sheet each for tenants, rent, electricity and repairs. These are for viewing and printing — they can't be restored into the app.</p>
+    <button class="btn ghost" onclick="exportExcel()">Download Excel (.xlsx)</button>
+    <button class="btn ghost" onclick="exportPDF()">Save as PDF</button>
   </div>
   <div class="card"><h3>Daily auto-backup</h3>
-    <label style="display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:13px">
-      <input type="checkbox" id="autoBackupToggle" ${s.autoBackupEnabled?'checked':''} onchange="toggleAutoBackup()" style="width:auto">
-      Auto-download a backup once a day
+    <label style="display:flex;align-items:center;gap:8px;margin:0">
+      <input type="checkbox" id="autoBackupToggle" ${s.autoBackupEnabled?'checked':''} onchange="toggleAutoBackup()">
+      Download a backup once a day when I open the app
     </label>
-    <p style="font-size:12px;color:var(--ink-soft);margin-top:8px">Last auto-backup: ${s.lastBackupDate||'never'}. When on, opening the app on a new day silently downloads a fresh .csv backup — on Wi-Fi only, on phones where the browser can tell the connection type (not all can, in which case it'll also run on mobile data). A web page genuinely can't push files into Drive by itself in the background — it can only download to your device. For the file to land in Drive automatically after that, turn on "Auto-backup" in your phone's Google Drive app for the Downloads folder — or use the manual "Backup to Google Drive" button above anytime.</p>
-  </div>
-  <div class="card"><h3>Import data</h3>
-    <p style="font-size:13px;color:var(--ink-soft)">Restore from a full backup file (.json) — useful if you switch phones or clear browser data. This replaces everything currently in the app.</p>
-    <input type="file" id="importFile" accept="application/json" style="display:none" onchange="handleImportFile(this)">
-    <button class="btn ghost" onclick="document.getElementById('importFile').click()">Import backup file (.json)</button>
-    <p style="font-size:12px;color:var(--ink-soft);margin-top:10px">If the file picker above doesn't open, open your .json backup file in another app, copy all its text, and paste it here instead:</p>
-    <label>Paste backup JSON</label>
-    <textarea id="importText" rows="4" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:2px;background:#fff;font-family:'Space Mono',monospace;font-size:12px;color:var(--ink)" placeholder='{"houses":[...'></textarea>
-    <button class="btn ghost" style="margin-top:8px" onclick="importFromPastedText()">Import from pasted text</button>
-  </div>
-  <div class="empty">CSV opens in Excel/Google Sheets. PDF opens your device's print/share sheet — choose "Save as PDF". The .json backup is the only format this app can re-import.</div>`;
+    <p class="hint" style="margin-top:8px">Last auto-backup: ${s.lastBackupDate||'never'}. It saves a .json backup to your phone's Downloads (on Wi-Fi where the browser can tell). An app can't upload to Drive by itself — use "Share / save to Drive" above for that.</p>
+  </div>`;
 }
 function toggleAutoBackup(){
   DB.settings.autoBackupEnabled = document.getElementById('autoBackupToggle').checked;
   save(); render();
 }
-function exportJSON(){
-  downloadFile('rent-accounts-full-backup-'+new Date().toISOString().slice(0,10)+'.json', JSON.stringify(DB, null, 2));
-}
-let pendingImport = null;
-function parseAndConfirmImport(text){
+
+// ---------- files ----------
+function backupName(ext){ return 'rent-accounts-backup-'+new Date().toISOString().slice(0,10)+'.'+ext; }
+async function saveBlob(filename, blob){
   try{
-    const parsed = JSON.parse(text);
-    if(!parsed || typeof parsed!=='object' || !Array.isArray(parsed.houses)) throw new Error('bad shape');
-    pendingImport = parsed;
-    openModal(`<button class="close" onclick="closeModal()">×</button><h2>Import backup?</h2>
-      <p style="font-size:13px;color:var(--red)">This will replace ALL current data with this file: ${parsed.houses.length} houses, ${(parsed.tenants||[]).length} tenants, ${(parsed.entries||[]).length} rent entries. This cannot be undone.</p>
-      <button class="btn danger" onclick="confirmImport()">Yes, replace all data</button>
-      <button class="btn ghost" onclick="closeModal()">Cancel</button>`);
-  }catch(err){
-    openModal(`<button class="close" onclick="closeModal()">×</button><h2>Import failed</h2>
-      <p style="font-size:13px;color:var(--red)">That doesn't look like valid Rent Accounts backup JSON (from "Download full backup" above). Make sure you copied the whole file, starting with { and ending with }.</p>`);
+    if(typeof claude!=='undefined' && claude.use && blob.type.indexOf('json')>-1){
+      const d = await claude.use('downloads');
+      if(d){ await d.save({filename, data: await blob.text()}); return; }
+    }
+  }catch(e){}
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.style.display = 'none';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 5000);
+}
+function exportJSON(){
+  saveBlob(backupName('json'), new Blob([JSON.stringify(DB, null, 2)], {type:'application/json'}));
+}
+async function shareBackup(){
+  const text = JSON.stringify(DB, null, 2);
+  try{
+    const file = new File([text], backupName('json'), {type:'application/json'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:'Rent Accounts backup'});
+      return;
+    }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  exportJSON();
+  notice('Downloaded instead', "Sharing isn't available here, so the backup was saved to your Downloads folder. Upload it to Drive from there.");
+}
+function exportExcel(){
+  if(typeof claude!=='undefined'){ notice('Use the installed app','Excel download works in the installed Rent Accounts app. This preview page cannot save Excel files.'); return; }
+  if(!window.XLSX){ notice('Excel not ready','The Excel component has not loaded yet. Wait a moment and try again, or use the .json backup.'); return; }
+  const tn = id => DB.tenants.find(x=>x.id===id) || {};
+  const sheets = [
+    ['Tenants', ['Serial','Name','House','Room','Status','Phone','Security','Rent due','Move in','Move out','Notes'],
+      DB.tenants.map(t=>({Serial:t.serial||'',Name:t.name,House:houseName(houseOfRoom(t.roomId)),Room:roomName(t.roomId),Status:t.status==='vacated'?'Vacated':'Active',Phone:t.phone||'',Security:Number(t.security||0),'Rent due':t.dueDay||'','Move in':t.moveIn||'','Move out':t.moveOut||'',Notes:t.notes||''}))],
+    ['Rent', ['Serial','Tenant','House','Room','Month','Date','Rent'],
+      DB.entries.map(e=>{const t=tn(e.tenantId);return {Serial:t.serial||'',Tenant:t.name||'',House:t.roomId?houseName(houseOfRoom(t.roomId)):'',Room:t.roomId?roomName(t.roomId):'',Month:e.month||'',Date:e.date||'',Rent:Number(e.rent||0)};})],
+    ['Electricity received', ['House','Tenant','Date','Amount'],
+      (DB.elecReceipts||[]).map(x=>({House:houseName(x.houseId),Tenant:x.tenantName||'',Date:x.date||'',Amount:Number(x.amount||0)}))],
+    ['Electricity bills', ['House','Date','Units','Bill amount','Per unit'],
+      (DB.elecBills||[]).map(b=>({House:houseName(b.houseId),Date:b.date||'',Units:Number(b.units||0),'Bill amount':Number(b.amount||0),'Per unit':b.units?Math.round(b.amount/b.units*100)/100:''}))],
+    ['Fund additions', ['House','Date','Note','Amount'],
+      (DB.fundAdds||[]).map(x=>({House:houseName(x.houseId),Date:x.date||'',Note:x.note||'',Amount:Number(x.amount||0)}))],
+    ['Repairs', ['House','Date','Particular','Amount'],
+      DB.expenses.map(x=>({House:houseName(x.houseId),Date:x.date||'',Particular:x.particular||'',Amount:Number(x.amount||0)}))]
+  ];
+  const wb = XLSX.utils.book_new();
+  sheets.forEach(([name, headers, rows])=>{
+    const ws = XLSX.utils.json_to_sheet(rows, {header: headers});
+    ws['!cols'] = headers.map(h=>({wch: Math.max(12, h.length+2)}));
+    XLSX.utils.book_append_sheet(wb, ws, name);
+  });
+  const out = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+  saveBlob(backupName('xlsx'), new Blob([out], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+}
+function exportPDF(){
+  const tbl = (head, rows) => `<table><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table>`;
+  let body = `<h1>Rent Accounts — Report</h1><p>${new Date().toLocaleDateString('en-IN')}</p>`;
+  DB.houses.forEach(h=>{
+    const {billed, received, profit} = houseElecTotals(h.id);
+    body += `<h2>${h.name}</h2><p>Electricity: billed ₹${billed} · received ₹${received} · profit ₹${profit}</p>`;
+    const roomIds = DB.rooms.filter(r=>r.houseId===h.id).map(r=>r.id);
+    DB.tenants.filter(t=>roomIds.includes(t.roomId)).forEach(t=>{
+      body += `<h3>${t.serial||''} ${t.name} (${roomName(t.roomId)}) — ${t.status==='vacated'?'vacated':'active'}</h3>`;
+      body += tbl(['Month','Date','Rent'], tenantEntries(t.id).map(e=>[e.month||'', e.date||'', '₹'+e.rent]));
+      const el = tenantElecReceipts(t.id);
+      if(el.length) body += tbl(['Electricity paid on','Amount'], el.map(x=>[x.date||'', '₹'+x.amount]));
+    });
+    const exps = DB.expenses.filter(x=>x.houseId===h.id);
+    if(exps.length) body += '<h3>Repairs</h3>' + tbl(['Date','Particular','Amount'], exps.map(x=>[x.date||'', x.particular||'', '₹'+x.amount]));
+  });
+  let area = document.getElementById('printArea');
+  if(!area){ area = document.createElement('div'); area.id = 'printArea'; document.body.appendChild(area); }
+  area.innerHTML = body;
+  window.print();
+}
+
+// ---------- restore ----------
+let pendingImport = null;
+function normalizeDB(d){
+  ['houses','rooms','tenants','entries','expenses','elecBills','elecReceipts'].forEach(k=>{ if(!Array.isArray(d[k])) d[k] = []; });
+  const theme = DB.settings.theme;
+  d.settings = Object.assign({autoBackupEnabled:false, lastBackupDate:null}, d.settings || {});
+  d.settings.theme = theme;
+  return d;
+}
+function parseAndConfirmImport(text){
+  let parsed = null;
+  try{ parsed = JSON.parse(String(text).replace(/^\uFEFF/, '').trim()); }catch(e){}
+  if(!parsed || typeof parsed!=='object' || !Array.isArray(parsed.houses)){
+    notice('Not a backup file', 'This is not a Rent Accounts .json backup. Use the file made by <b>Download backup (.json)</b>. If you pasted text, make sure you copied all of it, from the first { to the last }.');
+    return;
   }
+  pendingImport = parsed;
+  openModal(`<button class="close" onclick="closeModal()">×</button><h2>Restore this backup?</h2>
+    <p class="hint" style="color:var(--danger)">This replaces ALL current data with the file's data: ${parsed.houses.length} houses, ${(parsed.tenants||[]).length} tenants, ${(parsed.entries||[]).length} rent entries. This cannot be undone.</p>
+    <button class="btn danger" onclick="confirmImport()">Yes, replace all data</button>
+    <button class="btn ghost" onclick="closeModal()">Cancel</button>`);
 }
 function handleImportFile(input){
-  const file = input.files[0];
+  const file = input.files && input.files[0];
   if(!file) return;
+  if(/\.(xlsx|xls|csv|pdf)$/i.test(file.name)){
+    notice('That is a report, not a backup', 'Excel, CSV and PDF files are for reading only. To restore, choose the <b>.json backup</b>.');
+    input.value = ''; return;
+  }
   const reader = new FileReader();
-  reader.onload = e => { parseAndConfirmImport(e.target.result); input.value=''; };
+  reader.onload = e => parseAndConfirmImport(e.target.result);
+  reader.onerror = () => notice('Could not read the file', 'Try the paste option below instead.');
   reader.readAsText(file);
+  input.value = '';
 }
 function importFromPastedText(){
   const text = document.getElementById('importText').value.trim();
-  if(!text){ openModal(`<button class="close" onclick="closeModal()">×</button><h2>Nothing pasted</h2><p style="font-size:13px;color:var(--ink-soft)">Paste the backup JSON into the box first.</p>`); return; }
+  if(!text){ notice('Nothing pasted', 'Paste the backup text into the box first.'); return; }
   parseAndConfirmImport(text);
 }
 function confirmImport(){
   if(!pendingImport) return;
-  DB = pendingImport;
-  DB.settings = DB.settings || {autoBackupEnabled:false, lastBackupDate:null};
-  DB.elecBills = DB.elecBills || []; DB.elecReceipts = DB.elecReceipts || [];
+  DB = normalizeDB(pendingImport);
   pendingImport = null;
-  save(); closeModal(); tab='dash'; render();
-}
-function csvEscape(v){ return '"' + String(v??'').replace(/"/g,'""') + '"'; }
-function buildCSV(){
-  let rows = [['Serial','House','Room','Tenant','Status','Month','Date','Rent']];
-  DB.entries.forEach(e=>{
-    const t = DB.tenants.find(x=>x.id===e.tenantId); if(!t) return;
-    rows.push([t.serial||'', houseName(houseOfRoom(t.roomId)), roomName(t.roomId), t.name, t.status, e.month, e.date, e.rent]);
-  });
-  rows.push([]); rows.push(['Electricity Meter (per house)']); rows.push(['House','Type','Date','Units','Amount','Per Unit / Flat']);
-  (DB.elecBills||[]).forEach(b=> rows.push([houseName(b.houseId),'Bill',b.date,b.units,b.amount,b.units?(b.amount/b.units).toFixed(2):'']));
-  (DB.elecReceipts||[]).forEach(x=> rows.push([houseName(x.houseId),'Received',x.date,'',x.amount,x.tenantName||'']));
-  rows.push([]); rows.push(['Repair Expenses']); rows.push(['House','Date','Particular','Amount']);
-  DB.expenses.forEach(x=> rows.push([houseName(x.houseId), x.date, x.particular, x.amount]));
-  const csv = rows.map(r=>r.map(csvEscape).join(',')).join('\n');
-  const filename = 'rent-accounts-backup-'+new Date().toISOString().slice(0,10)+'.csv';
-  return {csv, filename};
-}
-async function downloadFile(filename, data){
-  try{
-    const downloads = await claude.use('downloads');
-    if(downloads){ await downloads.save({filename, data}); return; }
-  }catch(e){}
-  const blob = new Blob([data], {type:'text/csv'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
-  document.body.appendChild(a); a.click(); a.remove();
-}
-async function exportCSV(){
-  const {csv, filename} = buildCSV();
-  await downloadFile(filename, csv);
-}
-async function backupToDrive(){
-  const {csv, filename} = buildCSV();
-  await downloadFile(filename, csv);
-  window.open('https://drive.google.com/drive/my-drive', '_blank');
-}
-function exportPDF(){
-  const w = window.open('', '_blank');
-  let body = `<h1>Rent Accounts — Backup</h1><p>${new Date().toLocaleDateString()}</p>`;
-  DB.houses.forEach(h=>{
-    body += `<h2>${h.name}</h2>`;
-    const roomIds = DB.rooms.filter(r=>r.houseId===h.id).map(r=>r.id);
-    DB.tenants.filter(t=>roomIds.includes(t.roomId)).forEach(t=>{
-      body += `<h3>${t.serial||''} — ${t.name} (${roomName(t.roomId)}) — ${t.status}</h3><table border="1" cellpadding="4" style="border-collapse:collapse;width:100%;font-size:12px">
-        <tr><th>Month</th><th>Date</th><th>Rent</th></tr>`;
-      tenantEntries(t.id).forEach(e=>{
-        body += `<tr><td>${e.month}</td><td>${e.date}</td><td>₹${e.rent}</td></tr>`;
-      });
-      body += `</table>`;
-      const elecs = tenantElecReceipts(t.id);
-      if(elecs.length){
-        body += `<table border="1" cellpadding="4" style="border-collapse:collapse;width:100%;font-size:12px"><tr><th>Electricity paid</th><th>Amount</th></tr>`;
-        elecs.forEach(x=> body += `<tr><td>${x.date}</td><td>₹${x.amount}</td></tr>`);
-        body += `</table>`;
-      }
-    });
-    const exps = DB.expenses.filter(x=>x.houseId===h.id);
-    if(exps.length){
-      body += `<h3>Repairs</h3><table border="1" cellpadding="4" style="border-collapse:collapse;width:100%;font-size:12px"><tr><th>Date</th><th>Particular</th><th>Amount</th></tr>`;
-      exps.forEach(x=> body += `<tr><td>${x.date}</td><td>${x.particular}</td><td>₹${x.amount}</td></tr>`);
-      body += `</table>`;
-    }
-  });
-  w.document.write(`<html><head><title>Rent Accounts Backup</title></head><body style="font-family:Georgia,serif">${body}</body></html>`);
-  w.document.close(); w.focus();
-  setTimeout(()=>w.print(), 400);
+  save(); closeModal(); tab = 'dash'; applyTheme(); render();
 }
 
 // ---------- Modals ----------
@@ -786,14 +1075,14 @@ function openTenantDetail(tid){
     <div style="margin-top:10px">
       <button class="btn" onclick="openRentModal('${tid}')">+ Add rent</button>
       <button class="btn ghost" onclick="openTenantElecModal('${tid}')">+ Add electricity payment</button><br>
-      <button class="btn ghost" onclick="editTenant('${tid}')">Edit details / notes / links</button>
+      <button class="btn ghost" onclick="editTenant('${tid}')">Edit details / notes / links</button><br><button class="btn ghost" onclick="tenantExcel('${tid}')">Download Excel</button><button class="btn ghost" onclick="tenantPDF('${tid}')">Download PDF</button>
       ${t.status!=='vacated'? `<button class="btn ghost" onclick="openVacateModal('${tid}')">Mark vacated</button>`:''}
     </div>
     <hr class="divider">
     <h3 style="font-size:13px">Rent history</h3>
-    ${es.map(e=>`<div class="entryline row"><span>${e.month} · ${e.date}</span><b class="num">₹${Number(e.rent).toLocaleString('en-IN')}</b></div>`).join('') || '<div class="empty">No rent entries yet.</div>'}
+    ${es.map(e=>`<div class="entryline row"><span>${e.month} · ${e.date}</span><span><b class="num">₹${Number(e.rent).toLocaleString('en-IN')}</b><button class="mini" onclick="openEditRecord('rent','${e.id}','${tid}')">Edit</button></span></div>`).join('') || '<div class="empty">No rent entries yet.</div>'}
     <h3 style="font-size:13px;margin-top:14px">Electricity payments</h3>
-    ${elecs.map(x=>`<div class="entryline row"><span>${x.date}</span><b class="num">₹${Number(x.amount).toLocaleString('en-IN')}</b></div>`).join('') || '<div class="empty">No electricity payments yet.</div>'}`);
+    ${elecs.map(x=>`<div class="entryline row"><span>${x.date}</span><span><b class="num">₹${Number(x.amount).toLocaleString('en-IN')}</b><button class="mini" onclick="openEditRecord('elecReceipt','${x.id}','${tid}')">Edit</button></span></div>`).join('') || '<div class="empty">No electricity payments yet.</div>'}`);
 }
 
 function openRentModal(tid){
@@ -870,6 +1159,7 @@ function saveExpense(){
   save(); closeModal(); render();
 }
 
+applyTheme();
 render();
 
 function checkAutoBackup(){
@@ -880,8 +1170,7 @@ function checkAutoBackup(){
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const wifiOk = (conn && conn.type) ? conn.type==='wifi' : true;
   if(!wifiOk) return;
-  const {csv, filename} = buildCSV();
-  downloadFile(filename, csv);
+  exportJSON();
   s.lastBackupDate = today;
   save();
 }
@@ -901,6 +1190,13 @@ checkAutoBackup();
     }
   }, {passive:true});
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
