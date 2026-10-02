@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "Rent Accounts",
+  "short_name": "Rent",
+  "description": "Track rent, electricity and repairs for your rental houses, with automatic Google Drive backup.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#6D28D9",
+  "lang": "en",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
